@@ -1,0 +1,3 @@
+rootProject.name = 'LifeInSpace'
+
+include "core", "platform:desktop", "platform:ios", "platform:android"

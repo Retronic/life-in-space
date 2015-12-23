@@ -1,0 +1,172 @@
+group 'com.retronicgames.lis'
+version '1.0.0-SNAPSHOT'
+description 'Life In Space'
+
+buildscript {
+	ext {
+		versionKotlin = "1.0.0-beta-4583"
+		versionGdx = "1.7.2"
+		versionLwjgl = "1.7.2"
+		versionRoboVM = '1.12.0'
+		versionAndroidTools = "1.5.0"
+	}
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versionKotlin"
+		classpath "com.android.tools.build:gradle:$versionAndroidTools"
+		classpath "org.robovm:robovm-gradle-plugin:$versionRoboVM"
+	}
+}
+
+allprojects {
+	group 'com.retronicgames.lis'
+	version '1.0.0-SNAPSHOT'
+	description 'Life In Space'
+}
+
+configure(allprojects - project("platform:android")) {
+	apply plugin: 'kotlin'
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://jitpack.io" }
+	}
+
+	dependencies {
+		compile "org.jetbrains.kotlin:kotlin-stdlib:$versionKotlin"
+	}
+}
+
+project("core") {
+	jar {
+		manifest {
+			attributes 'Implementation-Title': project.description,
+					'Implementation-Version': project.version
+		}
+	}
+
+	dependencies {
+		compile "com.badlogicgames.gdx:gdx:$versionGdx"
+		compile "com.badlogicgames.gdx:gdx-freetype:$versionGdx"
+	}
+}
+
+project("platform:desktop") {
+	apply plugin: 'application'
+
+	group 'com.retronicgames.lis'
+	version '1.0.0-SNAPSHOT'
+	description 'Life In Space'
+
+	mainClassName = "com.retronicgames.lis.platform.DesktopLauncher"
+
+	dependencies {
+		compile project(":core")
+
+//		compile "com.badlogicgames.gdx:gdx-backend-jglfw:$versionJglfw"
+		compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$versionLwjgl"
+		compile "com.badlogicgames.gdx:gdx-platform:$versionGdx:natives-desktop"
+		compile "com.badlogicgames.gdx:gdx-freetype-platform:$versionGdx:natives-desktop"
+	}
+}
+
+project("platform:android") {
+	apply plugin: "android"
+
+	android {
+		buildToolsVersion "23.0.2"
+		compileSdkVersion 20
+	}
+
+	configurations { natives }
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "https://jitpack.io" }
+	}
+
+	dependencies {
+		compile project(":core")
+
+		compile "com.badlogicgames.gdx:gdx-backend-android:$versionGdx"
+
+		natives "com.badlogicgames.gdx:gdx-platform:$versionGdx:natives-armeabi"
+		natives "com.badlogicgames.gdx:gdx-platform:$versionGdx:natives-armeabi-v7a"
+		natives "com.badlogicgames.gdx:gdx-platform:$versionGdx:natives-x86"
+
+		compile "com.badlogicgames.gdx:gdx-freetype:$versionGdx"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$versionGdx:natives-armeabi"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$versionGdx:natives-armeabi-v7a"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$versionGdx:natives-x86"
+	}
+
+	// called every time gradle gets executed, takes the native dependencies of
+	// the natives configuration, and extracts them to the proper libs/ folders
+	// so they get packed with the APK.
+	task copyAndroidNatives() {
+		file("libs/armeabi/").mkdirs();
+		file("libs/armeabi-v7a/").mkdirs();
+		file("libs/x86/").mkdirs();
+
+		configurations.natives.files.each { jar ->
+			def outputDir = null
+			if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+			if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+			if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+			if (outputDir != null) {
+				copy {
+					from zipTree(jar)
+					into outputDir
+					include "*.so"
+				}
+			}
+		}
+	}
+
+	task run(type: Exec) {
+		def path
+		def localProperties = project.file("../local.properties")
+		if (localProperties.exists()) {
+			Properties properties = new Properties()
+			localProperties.withInputStream { instr ->
+				properties.load(instr)
+			}
+			def sdkDir = properties.getProperty('sdk.dir')
+			if (sdkDir) {
+				path = sdkDir
+			} else {
+				path = "$System.env.ANDROID_HOME"
+			}
+		} else {
+			path = "$System.env.ANDROID_HOME"
+		}
+
+		def adb = path + "/platform-tools/adb"
+		commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.mygdx.game.android/com.mygdx.game.android.AndroidLauncher'
+	}
+}
+
+project("platform:ios") {
+	apply plugin: "robovm"
+
+	dependencies {
+		compile project(":core")
+
+		compile "org.robovm:robovm-rt:$versionRoboVM"
+		compile "org.robovm:robovm-cocoatouch:$versionRoboVM"
+
+		compile "com.badlogicgames.gdx:gdx-backend-robovm:$versionGdx"
+		compile "com.badlogicgames.gdx:gdx-platform:$versionGdx:natives-ios"
+		compile "com.badlogicgames.gdx:gdx-freetype-platform:$versionGdx:natives-ios"
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = "2.9"
+}
