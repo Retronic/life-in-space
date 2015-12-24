@@ -2,4 +2,7 @@
 .gradle/
 libs/
 build/
+
 local.properties
+
+core/src/main/resources/textures

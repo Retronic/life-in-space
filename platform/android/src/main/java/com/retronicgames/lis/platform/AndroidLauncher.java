@@ -18,6 +18,6 @@ public class AndroidLauncher extends AndroidApplication {
 		} catch (PackageManager.NameNotFoundException e) {
 			version = "???";
 		}
-		initialize(new LISGame(new PlatformSupport(version) {}), config);
+		initialize(new LISGame(new PlatformSupport(version, "FIXME") {}), config);
 	}
 }

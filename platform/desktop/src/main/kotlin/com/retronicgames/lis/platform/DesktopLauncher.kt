@@ -8,13 +8,16 @@ import com.retronicgames.lis.LISGame
 object DesktopLauncher {
 	@JvmStatic fun main(arg: Array<String>) {
 		val gamePackage = LISGame::class.java.`package`
-		val version = gamePackage.specificationVersion ?: "<version>"
+		val version = gamePackage.implementationVersion ?: "<version>"
 		var title = gamePackage.implementationTitle ?: "<title>"
 
 		val config = LwjglApplicationConfiguration()
 
 		config.title = title
 
-		LwjglApplication(LISGame(object : PlatformSupport(version) {}), config)
+		config.width = 1280
+		config.height= 1024
+
+		LwjglApplication(LISGame(object : PlatformSupport(version, title) {}), config)
 	}
 }

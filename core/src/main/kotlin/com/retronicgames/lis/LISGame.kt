@@ -1,17 +1,24 @@
 package com.retronicgames.lis
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.math.MathUtils
 import com.retronicgames.api.gdx.PlatformSupport
+import com.retronicgames.lis.screen.ScreenGame
 
 class LISGame(private val platformSupport: PlatformSupport) : Game() {
-	override fun create() {
-
+	private companion object {
+		val MARKER = LISGame::class.java.simpleName
 	}
 
-	override fun render() {
-		Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+	override fun create() {
+		// FIXME: Remove!
+		Gdx.app.logLevel = Application.LOG_DEBUG
+		MathUtils.random.setSeed(1234567890123456L)
+
+		Gdx.app.debug(MARKER, "${platformSupport.title} v${platformSupport.version}")
+
+		setScreen(ScreenGame)
 	}
 }

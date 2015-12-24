@@ -16,7 +16,7 @@ object IOSLauncher : IOSApplication.Delegate() {
 
 		val version = NSBundle.getMainBundle().getInfoDictionaryObject("CFBundleShortVersionString").toString()
 
-		return IOSApplication(LISGame(object : PlatformSupport(version) {}), config);
+		return IOSApplication(LISGame(object : PlatformSupport(version, "FIXME") {}), config);
 	}
 
 	@JvmStatic public fun main(argv: Array<String>) {

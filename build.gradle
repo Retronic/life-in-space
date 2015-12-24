@@ -4,11 +4,16 @@ description 'Life In Space'
 
 buildscript {
 	ext {
-		versionKotlin = "1.0.0-beta-4583"
+		versionKotlin = "1.0.0-beta-4584"
 		versionGdx = "1.7.2"
 		versionLwjgl = "1.7.2"
 		versionRoboVM = '1.12.0'
 		versionAndroidTools = "1.5.0"
+
+		texturePacker = [
+				["resources/textures/terrain", "core/src/main/resources/textures", "terrain"],
+				["resources/textures/buildings", "core/src/main/resources/textures", "buildings"]
+		]
 	}
 
 	repositories {
@@ -19,6 +24,7 @@ buildscript {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versionKotlin"
 		classpath "com.android.tools.build:gradle:$versionAndroidTools"
 		classpath "org.robovm:robovm-gradle-plugin:$versionRoboVM"
+		classpath "com.badlogicgames.gdx:gdx-tools:$versionGdx"
 	}
 }
 
@@ -168,5 +174,15 @@ project("platform:ios") {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = "2.9"
+	gradleVersion = "2.10"
+}
+
+import com.badlogic.gdx.tools.texturepacker.TexturePacker
+
+task texturePacker << {
+	if (project.ext.has('texturePacker')) {
+		texturePacker.each {
+			TexturePacker.process(it[0], it[1], it[2])
+		}
+	}
 }
