@@ -2,6 +2,7 @@ package com.retronicgames.lis.manager
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
@@ -25,5 +26,11 @@ object Assets {
 		val textureAtlas = textureAtlas(atlas)
 		// FIXME: Cache!
 		return textureAtlas!!.createSprite(sprite, idx) ?: throw RuntimeException("Can't find the sprite '$sprite' with index $idx on the atlas '$atlas'")
+	}
+
+	fun ninePatch(atlas: String, id: String): NinePatch {
+		val textureAtlas = textureAtlas(atlas)
+		// FIXME: Cache!
+		return textureAtlas!!.createPatch(id)
 	}
 }
