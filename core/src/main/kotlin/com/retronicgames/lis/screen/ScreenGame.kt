@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.ui.LISGUI
@@ -22,7 +23,7 @@ object ScreenGame : ScreenAdapter() {
 	private val TILE_H = 32;
 
 	private val map = GameMap(MAP_W, MAP_H)
-	private val visualMap = VisualMap(MAP_W, MAP_H, TILE_W, TILE_H)
+	private val visualMap = VisualMap(map, MAP_W, MAP_H, TILE_W, TILE_H)
 	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
 
 	private val gui = LISGUI()
@@ -58,7 +59,7 @@ object ScreenGame : ScreenAdapter() {
 
 		override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
 			if (!isDragging) {
-				performAction()
+				performAction(screenX, screenY)
 			}
 			isDragging = false
 			startTouch.set(-1, -1)
@@ -68,15 +69,15 @@ object ScreenGame : ScreenAdapter() {
 	}
 
 	init {
-		visualMap.rebuild(map)
-
 		cam.addListener(visualMap)
 
 		Gdx.input.inputProcessor = InputMultiplexer(gui.inputProcessor(), inputProcessor)
 	}
 
-	private fun performAction() {
-
+	private fun performAction(screenX: Int, screenY: Int) {
+		val coords = visualMap.screen2cellCoords(screenX, screenY)
+		visualMap.markCell(coords, Color.SALMON)
+		gui.showModal("dialog.build.text")
 	}
 
 	override fun resize(width: Int, height: Int) {

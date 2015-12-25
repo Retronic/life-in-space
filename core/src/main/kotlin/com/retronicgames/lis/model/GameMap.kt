@@ -3,6 +3,7 @@ package com.retronicgames.lis.model
 import com.badlogic.gdx.math.MathUtils
 import com.retronicgames.lis.screen.MapCell
 import com.retronicgames.lis.screen.ScreenGame
+import com.retronicgames.utils.IntVector2
 
 class GameMap(val width: Int, val height: Int) {
 	companion object {
@@ -74,4 +75,6 @@ class GameMap(val width: Int, val height: Int) {
 
 	fun random(x: Int, y: Int) = randomMap[y][x]
 	fun <T> random(x: Int, y: Int, array: com.badlogic.gdx.utils.Array<T>) = array[randomMap[y][x] % array.size]
+
+	fun cellAt(coords: IntVector2) = gameMap.getOrNull(coords.y)?.getOrNull(coords.x)
 }

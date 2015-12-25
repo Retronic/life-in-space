@@ -2,6 +2,7 @@ package com.retronicgames.utils
 
 open class IntVector2(x: Int, y: Int) {
 	companion object {
+		val MINUS_ONE = IntVector2(-1, -1)
 		val ZERO = IntVector2(0, 0)
 		val ONE = IntVector2(1, 1)
 	}

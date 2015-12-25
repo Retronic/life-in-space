@@ -1,5 +1,6 @@
 package com.retronicgames.lis.visual
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
@@ -9,8 +10,9 @@ import com.retronicgames.gdx.RGOrthoCachedTiledMapRenderer
 import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.utils.CameraListener
+import com.retronicgames.utils.IntVector2
 
-class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListener {
+class VisualMap(private val map: GameMap, width: Int, height: Int, tileW: Int, tileH: Int) : CameraListener {
 	private val visualMap = TiledMap()
 	private val size2idx = Array(3) { Array<com.badlogic.gdx.utils.Array<Int>?>(3) { null } }
 
@@ -40,13 +42,15 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListene
 
 		visualMap.tileSets.addTileSet(tileset)
 		visualMap.layers.add(layer)
+
+		rebuild(map)
 	}
 
 	override fun onCameraUpdate(cam: OrthographicCamera) {
 		renderer.setView(cam)
 	}
 
-	fun rebuild(map: GameMap) {
+	private fun rebuild(map: GameMap) {
 		map.forEachCell(false) { x, y, cell ->
 			val tileIdxs = size2idx[cell.h - 1][cell.w - 1]!!
 			val randomIdx = map.random(x, y, tileIdxs)
@@ -61,5 +65,30 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListene
 
 	fun update(delta: Float) {
 
+	}
+
+	private fun cellAt(coords: IntVector2): VisualCell? {
+		val cell = map.cellAt(coords) ?: return null
+		return layer.getCell(cell.x, cell.y) as VisualCell?
+	}
+
+	fun screen2cellCoords(screenX: Int, screenY: Int) = renderer.screen2cellCoords(layer.width, layer.height, layer.tileWidth, layer.tileHeight, screenX, screenY)
+
+	/// Cell marking ///
+
+	private var lastMarkedCell: VisualCell? = null
+
+	fun markCell(coords: IntVector2, color: Color) {
+		lastMarkedCell?.color = null
+		val cell = cellAt(coords) ?: return
+		cell.color = color
+		lastMarkedCell = cell
+
+		renderer.invalidateCache()
+	}
+
+	fun unmarkAllCells() {
+		lastMarkedCell?.color = null
+		lastMarkedCell = null
 	}
 }

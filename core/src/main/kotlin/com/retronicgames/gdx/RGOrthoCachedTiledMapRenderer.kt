@@ -31,6 +31,8 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Disposable
 import com.retronicgames.lis.visual.VisualCell
+import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.MutableIntVector2
 
 /** Renders ortho tiles by caching geometry on the GPU. How much is cached is controlled by [.setOverCache]. When the
  * view reaches the edge of the cached tiles, the cache is rebuilt at the new view position.
@@ -43,6 +45,11 @@ import com.retronicgames.lis.visual.VisualCell
  * @author Edu Garcia
  */
 class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var unitScale: Float = 1f, cacheSize: Int = 2000) : TiledMapRenderer, Disposable {
+	companion object {
+		private val tolerance = 0.00001f
+		protected val NUM_VERTICES = 20
+	}
+
 	val spriteCache: SpriteCache
 
 	protected val vertices = FloatArray(20)
@@ -65,6 +72,8 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 	protected var canCacheMoreE: Boolean = false
 	protected var canCacheMoreW: Boolean = false
 	protected var canCacheMoreS: Boolean = false
+
+	private val tempIntVector2 = MutableIntVector2(-1, -1)
 
 	var defaultCellColor = Color.WHITE
 
@@ -412,8 +421,16 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		spriteCache.dispose()
 	}
 
-	companion object {
-		private val tolerance = 0.00001f
-		protected val NUM_VERTICES = 20
+	fun screen2cellCoords(layerWidth: Int, layerHeight: Int, tileWidth: Float, tileHeight: Float, screenX: Int, screenY: Int): IntVector2 {
+		val layerTileWidth = tileWidth * unitScale
+		val layerTileHeight = tileHeight * unitScale
+
+		val floatX = (viewBounds.x + screenX) / layerTileWidth
+		val floatY = (viewBounds.y + viewBounds.height - screenY) / layerTileHeight
+
+		val x = if (floatX < 0 || floatX > layerWidth) -1 else floatX.toInt()
+		val y = if (floatY < 0 || floatY > layerHeight) -1 else floatY.toInt()
+
+		return if (x < 0 || y < 0) IntVector2.MINUS_ONE else tempIntVector2.set(x, y)
 	}
 }
