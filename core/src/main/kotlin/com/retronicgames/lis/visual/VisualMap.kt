@@ -2,26 +2,23 @@ package com.retronicgames.lis.visual
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet
-import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile
+import com.retronicgames.gdx.RGOrthoCachedTiledMapRenderer
 import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.GameMap
-import com.retronicgames.lis.screen.MapCell
 
 class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) {
 	private val visualMap = TiledMap()
 	private val size2idx = Array(3) { Array<com.badlogic.gdx.utils.Array<Int>?>(3) { null } }
 
-	private val renderer = OrthoCachedTiledMapRenderer(visualMap)
+	private val renderer = RGOrthoCachedTiledMapRenderer(visualMap)
 	private val tileset = TiledMapTileSet()
 	private val layer = TiledMapTileLayer(width, height, tileW, tileH)
 
 	init {
 		val textureAtlas = Assets.textureAtlas("terrain") ?: throw RuntimeException("Cannot load terrain!")
-
 
 		val tileRegex = Regex("tile(\\d)x(\\d)")
 		var idx = 0
@@ -59,12 +56,5 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) {
 			layer.setCell(x, y, VisualCell(cell, tileset.getTile(randomIdx)))
 		}
 		renderer.invalidateCache()
-	}
-
-}
-
-class VisualCell(cell: MapCell, tile: TiledMapTile) : TiledMapTileLayer.Cell() {
-	init {
-		setTile(tile)
 	}
 }
