@@ -2,6 +2,7 @@ package com.retronicgames.lis.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.model.GameMap
@@ -9,6 +10,7 @@ import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
 import com.retronicgames.utils.RGCamera
+import com.retronicgames.utils.RGGUI
 
 object ScreenGame : ScreenAdapter() {
 	const val MAP_W = 30
@@ -22,6 +24,8 @@ object ScreenGame : ScreenAdapter() {
 	private val map = GameMap(MAP_W, MAP_H)
 	private val visualMap = VisualMap(MAP_W, MAP_H, TILE_W, TILE_H)
 	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
+
+	private val gui = RGGUI()
 
 	private val inputProcessor = object : InputAdapter() {
 		private var startTouch = MutableIntVector2(-1, -1)
@@ -68,7 +72,7 @@ object ScreenGame : ScreenAdapter() {
 
 		cam.addListener(visualMap)
 
-		Gdx.input.inputProcessor = inputProcessor
+		Gdx.input.inputProcessor = InputMultiplexer(gui.inputProcessor(), inputProcessor)
 	}
 
 	private fun performAction() {
@@ -77,13 +81,29 @@ object ScreenGame : ScreenAdapter() {
 
 	override fun resize(width: Int, height: Int) {
 		cam.resize(width, height)
+
+		gui.resize(width, height)
 	}
 
 	override fun render(delta: Float) {
+		update(delta)
+
+		render()
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun update(delta: Float) {
+		visualMap.update(delta)
+		gui.update(delta)
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun render() {
 		Gdx.gl.glClearColor(0xcb / 255f, 0xc4 / 255f, 0xac / 255f, 1f)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
 		visualMap.render()
+		gui.render()
 	}
 }
 

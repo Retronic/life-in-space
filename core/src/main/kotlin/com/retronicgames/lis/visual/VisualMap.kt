@@ -46,10 +46,6 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListene
 		renderer.setView(cam)
 	}
 
-	fun render() {
-		renderer.render()
-	}
-
 	fun rebuild(map: GameMap) {
 		map.forEachCell(false) { x, y, cell ->
 			val tileIdxs = size2idx[cell.h - 1][cell.w - 1]!!
@@ -57,5 +53,13 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListene
 			layer.setCell(x, y, VisualCell(cell, tileset.getTile(randomIdx)))
 		}
 		renderer.invalidateCache()
+	}
+
+	fun render() {
+		renderer.render()
+	}
+
+	fun update(delta: Float) {
+
 	}
 }
