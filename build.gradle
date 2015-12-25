@@ -98,6 +98,13 @@ project("platform:android") {
 	android {
 		buildToolsVersion "23.0.2"
 		compileSdkVersion 20
+
+		sourceSets {
+			main {
+				assets.srcDirs = ['../../core/src/main/resources']
+				jniLibs.srcDirs = ['jniLibs']
+			}
+		}
 	}
 
 	configurations { natives }
@@ -127,15 +134,13 @@ project("platform:android") {
 	// the natives configuration, and extracts them to the proper libs/ folders
 	// so they get packed with the APK.
 	task copyAndroidNatives() {
-		file("libs/armeabi/").mkdirs();
-		file("libs/armeabi-v7a/").mkdirs();
-		file("libs/x86/").mkdirs();
-
 		configurations.natives.files.each { jar ->
 			def outputDir = null
-			if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-			if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-			if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+
+			if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = project.file("./jniLibs/armeabi-v7a")
+			if (jar.name.endsWith("natives-armeabi.jar")) outputDir = project.file("./jniLibs/armeabi")
+			if (jar.name.endsWith("natives-x86.jar")) outputDir = project.file("./jniLibs/x86")
+
 			if (outputDir != null) {
 				copy {
 					from zipTree(jar)
@@ -148,7 +153,7 @@ project("platform:android") {
 
 	task run(type: Exec) {
 		def path
-		def localProperties = project.file("../local.properties")
+		def localProperties = project.file("../../local.properties")    // Relative to project path
 		if (localProperties.exists()) {
 			Properties properties = new Properties()
 			localProperties.withInputStream { instr ->
@@ -165,7 +170,7 @@ project("platform:android") {
 		}
 
 		def adb = path + "/platform-tools/adb"
-		commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.mygdx.game.android/com.mygdx.game.android.AndroidLauncher'
+		commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.retronicgames.lis/com.retronicgames.lis.platform.AndroidLauncher'
 	}
 }
 
