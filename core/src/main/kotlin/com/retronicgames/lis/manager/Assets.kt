@@ -21,9 +21,9 @@ object Assets {
 		return manager.get(atlasPath, TextureAtlas::class.java)
 	}
 
-	fun sprite(atlas: String, sprite: String, idx: Int = 0): Sprite? {
+	fun sprite(atlas: String, sprite: String, idx: Int = -1): Sprite {
 		val textureAtlas = textureAtlas(atlas)
 		// FIXME: Cache!
-		return textureAtlas!!.createSprite(sprite, idx)
+		return textureAtlas!!.createSprite(sprite, idx) ?: throw RuntimeException("Can't find the sprite '$sprite' with index $idx on the atlas '$atlas'")
 	}
 }

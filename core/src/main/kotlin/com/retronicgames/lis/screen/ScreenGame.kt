@@ -6,11 +6,11 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.model.GameMap
+import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
 import com.retronicgames.utils.RGCamera
-import com.retronicgames.utils.RGGUI
 
 object ScreenGame : ScreenAdapter() {
 	const val MAP_W = 30
@@ -25,7 +25,7 @@ object ScreenGame : ScreenAdapter() {
 	private val visualMap = VisualMap(MAP_W, MAP_H, TILE_W, TILE_H)
 	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
 
-	private val gui = RGGUI()
+	private val gui = LISGUI()
 
 	private val inputProcessor = object : InputAdapter() {
 		private var startTouch = MutableIntVector2(-1, -1)
