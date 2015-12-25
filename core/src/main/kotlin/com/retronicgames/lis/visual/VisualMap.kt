@@ -8,8 +8,9 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile
 import com.retronicgames.gdx.RGOrthoCachedTiledMapRenderer
 import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.GameMap
+import com.retronicgames.utils.CameraListener
 
-class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) {
+class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) : CameraListener {
 	private val visualMap = TiledMap()
 	private val size2idx = Array(3) { Array<com.badlogic.gdx.utils.Array<Int>?>(3) { null } }
 
@@ -41,7 +42,7 @@ class VisualMap(width: Int, height: Int, tileW: Int, tileH: Int) {
 		visualMap.layers.add(layer)
 	}
 
-	fun cameraUpdate(cam: OrthographicCamera) {
+	override fun onCameraUpdate(cam: OrthographicCamera) {
 		renderer.setView(cam)
 	}
 

@@ -1,11 +1,14 @@
 package com.retronicgames.lis.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.visual.VisualMap
+import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.MutableIntVector2
+import com.retronicgames.utils.RGCamera
 
 object ScreenGame : ScreenAdapter() {
 	const val MAP_W = 30
@@ -16,15 +19,47 @@ object ScreenGame : ScreenAdapter() {
 
 	private val map = GameMap(MAP_W, MAP_H)
 	private val visualMap = VisualMap(MAP_W, MAP_H, TILE_W, TILE_H)
-	private val cam = OrthographicCamera()
+	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
+
+	private val inputProcessor = object : InputAdapter() {
+		private var startDrag = MutableIntVector2(-1, -1)
+		private var isDragging = false
+
+		override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+			isDragging = false
+			startDrag.set(screenX, screenY)
+
+			return true
+		}
+
+		override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+			if (startDrag < IntVector2.ZERO) return false
+
+			isDragging = true
+			cam.translate((startDrag.x - screenX).toFloat(), (screenY - startDrag.y).toFloat())
+			startDrag.set(screenX, screenY)
+
+			return true
+		}
+
+		override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+			isDragging = false
+			startDrag.set(-1, -1)
+
+			return true
+		}
+	}
 
 	init {
 		visualMap.rebuild(map)
+
+		cam.addListener(visualMap)
+
+		Gdx.input.inputProcessor = inputProcessor
 	}
 
 	override fun resize(width: Int, height: Int) {
-		cam.setToOrtho(false, width.toFloat(), height.toFloat())
-		visualMap.cameraUpdate(cam);
+		cam.resize(width, height)
 	}
 
 	override fun render(delta: Float) {
