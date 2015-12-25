@@ -14,6 +14,8 @@ object ScreenGame : ScreenAdapter() {
 	const val MAP_W = 30
 	const val MAP_H = 30
 
+	const val DRAG_THRESHOLD = 10
+
 	private val TILE_W = 32;
 	private val TILE_H = 32;
 
@@ -22,29 +24,40 @@ object ScreenGame : ScreenAdapter() {
 	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
 
 	private val inputProcessor = object : InputAdapter() {
-		private var startDrag = MutableIntVector2(-1, -1)
+		private var startTouch = MutableIntVector2(-1, -1)
+		private var endTouch = MutableIntVector2(-1, -1)
 		private var isDragging = false
 
 		override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
 			isDragging = false
-			startDrag.set(screenX, screenY)
+			startTouch.set(screenX, screenY)
 
 			return true
 		}
 
 		override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-			if (startDrag < IntVector2.ZERO) return false
+			if (startTouch < IntVector2.ZERO) return false
 
-			isDragging = true
-			cam.translate((startDrag.x - screenX).toFloat(), (screenY - startDrag.y).toFloat())
-			startDrag.set(screenX, screenY)
+			if (!isDragging) {
+				if (Math.abs(startTouch.x - screenX) > DRAG_THRESHOLD || Math.abs(startTouch.y - screenY) > DRAG_THRESHOLD) {
+					endTouch.set(screenX, screenY)
+					isDragging = true
+				}
+			}
+			if (isDragging) {
+				cam.translate((endTouch.x - screenX).toFloat(), (screenY - endTouch.y).toFloat())
+				endTouch.set(screenX, screenY)
+			}
 
 			return true
 		}
 
 		override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+			if (!isDragging) {
+				performAction()
+			}
 			isDragging = false
-			startDrag.set(-1, -1)
+			startTouch.set(-1, -1)
 
 			return true
 		}
@@ -56,6 +69,10 @@ object ScreenGame : ScreenAdapter() {
 		cam.addListener(visualMap)
 
 		Gdx.input.inputProcessor = inputProcessor
+	}
+
+	private fun performAction() {
+
 	}
 
 	override fun resize(width: Int, height: Int) {
