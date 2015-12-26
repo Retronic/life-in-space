@@ -14,8 +14,8 @@ import com.retronicgames.utils.MutableIntVector2
 import com.retronicgames.utils.RGCamera
 
 object ScreenGame : ScreenAdapter() {
-	const val MAP_W = 30
-	const val MAP_H = 30
+	private const val MAP_W = 30
+	private const val MAP_H = 30
 
 	const val DRAG_THRESHOLD = 10
 
@@ -106,8 +106,4 @@ object ScreenGame : ScreenAdapter() {
 		visualMap.render()
 		gui.render()
 	}
-}
-
-class MapCell(val x: Int, val y: Int, val w: Int = 1, val h: Int = 1) {
-	override fun toString() = "($x, $y) [${w}x$h]"
 }
