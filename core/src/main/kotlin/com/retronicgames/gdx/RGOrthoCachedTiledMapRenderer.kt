@@ -31,6 +31,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Disposable
 import com.retronicgames.lis.visual.VisualCell
+import com.retronicgames.lis.visual.VisualMapObject
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
 
@@ -44,6 +45,7 @@ import com.retronicgames.utils.MutableIntVector2
  * @author Nathan Sweet
  * @author Edu Garcia
  */
+@Suppress("NOTHING_TO_INLINE")
 class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var unitScale: Float = 1f, cacheSize: Int = 2000) : TiledMapRenderer, Disposable {
 	companion object {
 		private val tolerance = 0.00001f
@@ -132,6 +134,8 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 				spriteCache.beginCache()
 				if (layer is TiledMapTileLayer) {
 					renderTileLayer(layer)
+				} else if (layer is RGObjectsOnlyMapLayer) {
+					renderObjectsOnlyLayer(layer)
 				} else if (layer is TiledMapImageLayer) {
 					renderImageLayer(layer)
 				}
@@ -140,8 +144,7 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		}
 
 		if (blending) {
-			Gdx.gl.glEnable(GL20.GL_BLEND)
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+			enableBlending()
 		}
 		spriteCache.begin()
 		val mapLayers = map.layers
@@ -149,14 +152,26 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		val j = mapLayers.count
 		while (i < j) {
 			val layer = mapLayers.get(i)
+			val needsBlending = layer is RGObjectsOnlyMapLayer
 			if (layer.isVisible) {
+				if (needsBlending && !blending) enableBlending()
 				spriteCache.draw(i)
+				if (needsBlending && !blending) disableBlending()
 				renderObjects(layer)
 			}
 			i++
 		}
 		spriteCache.end()
-		if (blending) Gdx.gl.glDisable(GL20.GL_BLEND)
+		if (blending) disableBlending()
+	}
+
+	private fun renderObjectsOnlyLayer(layer: RGObjectsOnlyMapLayer) {
+		// FIXME: We're caching sprites outside of view!
+		for (obj in layer.objects) {
+			val sprite = (obj as VisualMapObject).sprite
+
+			spriteCache.add(sprite)
+		}
 	}
 
 	override fun render(layers: IntArray) {
@@ -184,20 +199,32 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		}
 
 		if (blending) {
-			Gdx.gl.glEnable(GL20.GL_BLEND)
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+			enableBlending()
 		}
 		spriteCache.begin()
 		val mapLayers = map.layers
 		for (i in layers) {
 			val layer = mapLayers.get(i)
+			val needsBlending = layer is RGObjectsOnlyMapLayer
 			if (layer.isVisible) {
+				if (needsBlending && !blending) enableBlending()
 				spriteCache.draw(i)
+				if (needsBlending && !blending) disableBlending()
+
 				renderObjects(layer)
 			}
 		}
 		spriteCache.end()
-		if (blending) Gdx.gl.glDisable(GL20.GL_BLEND)
+		if (blending) disableBlending()
+	}
+
+	private inline fun enableBlending() {
+		Gdx.gl.glEnable(GL20.GL_BLEND)
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+	}
+
+	private inline fun disableBlending() {
+		Gdx.gl.glDisable(GL20.GL_BLEND)
 	}
 
 	override fun renderObjects(layer: MapLayer) {
