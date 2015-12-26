@@ -11,6 +11,9 @@ class LISGUI : RGGUI() {
 	private val dialog = Dialog("", LISSkin)
 
 	init {
+		dialog.isMovable = false
+		dialog.isModal = true
+
 		val btnMenu = button("btnMenu")
 
 		root.add(btnMenu).top().left().expand()
@@ -20,8 +23,8 @@ class LISGUI : RGGUI() {
 	 * Show text dialog with optional buttons
 	 */
 	fun showModal(i18nKey: String) {
-		dialog.clear()
-		dialog.add(LISSkin.wrappedLabel(i18n.get(i18nKey))).fillX().expandX().row()
+		dialog.contentTable.clear()
+		dialog.contentTable.add(LISSkin.wrappedLabel(i18n.get(i18nKey))).fillX().expandX().width(200f).row()
 		dialog.show(stage)
 	}
 }
