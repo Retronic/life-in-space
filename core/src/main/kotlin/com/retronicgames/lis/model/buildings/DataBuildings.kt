@@ -7,3 +7,8 @@ object DataBuildingLandingZone: DataModel {
 	override val id = "landingZone"
 	override val size = IntVector2(3, 3)
 }
+
+object DataBuildingLivingBlock : DataModel {
+	override val id = "livingBlock"
+	override val size = IntVector2(2, 2)
+}

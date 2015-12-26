@@ -6,3 +6,7 @@ import com.retronicgames.utils.IntVector2
 object DataVisualBuildingLandingZone : DataVisual {
 	override val offset = IntVector2.ZERO
 }
+
+object DataVisualBuildingLivingBlock : DataVisual {
+	override val offset = IntVector2.ZERO
+}

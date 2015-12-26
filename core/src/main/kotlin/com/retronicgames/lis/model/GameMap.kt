@@ -1,6 +1,7 @@
 package com.retronicgames.lis.model
 
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.utils.ObjectSet
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.utils.IntVector2
 
@@ -16,6 +17,8 @@ class GameMap(val width: Int, val height: Int) {
 
 	@Transient
 	private val tempCellArray = com.badlogic.gdx.utils.Array<BaseMapCell>(16)
+	@Transient
+	private val tempCellSet = ObjectSet<BaseMapCell>(16)
 
 	@Transient
 	private val cellChangeListeners = com.badlogic.gdx.utils.Array<(x: Int, y: Int, cell: BaseMapCell) -> Unit>(2)
@@ -39,7 +42,7 @@ class GameMap(val width: Int, val height: Int) {
 			var valid = true
 
 			val newCell = BaseMapCell(x, y, holeW, holeH)
-			forEachInRange(newCell) { x, y, row, oldCell ->
+			forEachInRange(true, newCell) { x, y, row, oldCell ->
 				if (oldCell.w != 1 || oldCell.h != 1) valid = false
 			}
 
@@ -50,37 +53,39 @@ class GameMap(val width: Int, val height: Int) {
 	}
 
 	private fun setCell(newCell: BaseMapCell) {
-		forEachInRange(newCell) { x, y, row, cell ->
+		forEachInRange(true, newCell) { x, y, row, cell ->
 			row[x] = newCell
 		}
 	}
 
-	private fun forEachInRange(x: Int, y: Int, w: Int, h: Int, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
-		for (newY in y..y + h - 1) {
+	/**
+	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations.
+	 * It also means that if the starting coordinate points to "half" a cell (i.e. is not the bottom left coordinate for that cell), said cell won't be returned!!
+	 */
+	private fun forEachInRange(processRepeated: Boolean, x: Int, y: Int, w: Int, h: Int, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
+		val x1 = Math.max(0, x)
+		val y1 = Math.max(0, y)
+		val x2 = Math.min(width - 1, x + w - 1)
+		val y2 = Math.min(height - 1, y + h - 1)
+
+		for (newY in y1..y2) {
 			val row = gameMap[newY]
-			for (newX in x..x + w - 1) {
-				callback(newX, newY, row, row[newX])
+			for (newX in x1..x2) {
+				val cell = row[newX]
+				if (!processRepeated && (cell.x != newX || cell.y != newY)) continue
+				callback(newX, newY, row, cell)
 			}
 		}
 	}
 
-	private fun forEachInRange(cell: BaseMapCell, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
-		return forEachInRange(cell.x, cell.y, cell.w, cell.h, callback)
+	private fun forEachInRange(processRepeated: Boolean, cell: BaseMapCell, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
+		return forEachInRange(processRepeated, cell.x, cell.y, cell.w, cell.h, callback)
 	}
 
 	/**
-	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations
+	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations.
 	 */
-	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
-		for (y in 0..height - 1) {
-			val row = gameMap[y]
-			for (x in 0..width - 1) {
-				val cell = row[x]
-				if (!processRepeated && (cell.x != x || cell.y != y)) continue
-				callback(x, y, row, cell)
-			}
-		}
-	}
+	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
 
 	fun createBuilding(x: Int, y: Int, model: Building<out DataModel>) = addTopCell(x, y, model)
 
@@ -92,7 +97,7 @@ class GameMap(val width: Int, val height: Int) {
 
 		val newCell = MapCell(model, x, y, size.x, size.y, cell)
 
-		forEachInRange(newCell) { x, y, row, cell ->
+		forEachInRange(true, newCell) { x, y, row, cell ->
 			row[x] = newCell
 		}
 		fireCellChange(x, y, newCell)
@@ -112,7 +117,7 @@ class GameMap(val width: Int, val height: Int) {
 	fun cellAt(x:Int, y:Int) = gameMap.getOrNull(y)?.getOrNull(x)
 	fun cellAt(coords: IntVector2) = cellAt(coords.x, coords.y)
 
-	fun randomEmptyCell(w: Int, h: Int): BaseMapCell {
+	fun randomEmptyCell(w: Int, h: Int): BaseMapCell? {
 		tempCellArray.clear()
 		forEachCell(false) { x, y, row, cell ->
 			if (cell.w == w && cell.h == h) {
@@ -121,6 +126,27 @@ class GameMap(val width: Int, val height: Int) {
 		}
 
 		return tempCellArray.random()
+	}
+
+	fun randomEmptyCellSurrounding(surroundedCell: BaseMapCell, targetW: Int, targetH: Int): BaseMapCell? {
+		tempCellSet.clear()
+
+		val x = surroundedCell.x
+		val y = surroundedCell.y
+		val w = surroundedCell.w
+		val h = surroundedCell.h
+		val callback = { x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell ->
+			if (cell.w == targetW && cell.h == targetH) {
+				tempCellSet.add(cell)
+			}
+		}
+		forEachInRange(true, x - 1, y - 1, w + 2, 1, callback)
+		forEachInRange(true, x - 1, y + h, w + 2, 1, callback)
+
+		forEachInRange(true, x - 1, y - 1, 1, h + 2, callback)
+		forEachInRange(true, x + w, y - 1, 1, h + 2, callback)
+
+		return tempCellSet.iterator().toArray().random()
 	}
 
 	fun addOnCellListener(listener: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {

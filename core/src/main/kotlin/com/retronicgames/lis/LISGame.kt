@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.retronicgames.api.gdx.PlatformSupport
+import com.retronicgames.lis.mission.Mission1
 import com.retronicgames.lis.screen.ScreenGame
 
 class LISGame(private val platformSupport: PlatformSupport) : Game() {
@@ -19,6 +20,10 @@ class LISGame(private val platformSupport: PlatformSupport) : Game() {
 
 		Gdx.app.debug(MARKER, "${platformSupport.title} v${platformSupport.version}")
 
-		setScreen(ScreenGame)
+		setScreen(ScreenGame(Mission1(this)))
+	}
+
+	fun showErrorDialog(message: String) {
+		throw RuntimeException(message)
 	}
 }

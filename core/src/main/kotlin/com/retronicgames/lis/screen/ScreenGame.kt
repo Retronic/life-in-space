@@ -6,25 +6,23 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.retronicgames.lis.model.GameMap
+import com.retronicgames.lis.mission.Mission
 import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
 import com.retronicgames.utils.RGCamera
 
-object ScreenGame : ScreenAdapter() {
-	private const val MAP_W = 30
-	private const val MAP_H = 30
-
-	const val DRAG_THRESHOLD = 10
+class ScreenGame(val mission: Mission) : ScreenAdapter() {
+	private companion object {
+		const val DRAG_THRESHOLD = 10
+	}
 
 	private val TILE_W = 32;
 	private val TILE_H = 32;
 
-	private val map = GameMap(MAP_W, MAP_H)
-	private val visualMap = VisualMap(map, MAP_W, MAP_H, TILE_W, TILE_H)
-	private val cam = RGCamera(MAP_W * TILE_W, MAP_H * TILE_H)
+	private val visualMap = VisualMap(mission.map, TILE_W, TILE_H)
+	private val cam = RGCamera(mission.map.width * TILE_W, mission.map.height * TILE_H)
 
 	private val gui = LISGUI()
 

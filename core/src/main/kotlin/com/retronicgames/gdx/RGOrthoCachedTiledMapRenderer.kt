@@ -169,6 +169,7 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		// FIXME: We're caching sprites outside of view!
 		for (obj in layer.objects) {
 			val sprite = (obj as VisualMapObject).sprite
+			sprite.color = obj.color
 
 			spriteCache.add(sprite)
 		}

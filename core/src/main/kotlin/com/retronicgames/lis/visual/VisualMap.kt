@@ -14,17 +14,19 @@ import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.MapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
+import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
+import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
 import com.retronicgames.utils.CameraListener
 import com.retronicgames.utils.IntVector2
 
-class VisualMap(private val map: GameMap, width: Int, height: Int, private val tileW: Int, private val tileH: Int) : CameraListener {
+class VisualMap(private val map: GameMap, private val tileW: Int, private val tileH: Int) : CameraListener {
 	private val visualMap = TiledMap()
 	private val baseSize2idx = Array(3) { Array<com.badlogic.gdx.utils.Array<Int>?>(3) { null } }
 
 	private val renderer = RGOrthoCachedTiledMapRenderer(visualMap)
 	private val tileset = TiledMapTileSet()
-	private val baseLayer = TiledMapTileLayer(width, height, tileW, tileH)
+	private val baseLayer = TiledMapTileLayer(map.width, map.height, tileW, tileH)
 	private val buildingsLayer = RGObjectsOnlyMapLayer()
 
 	init {
@@ -95,6 +97,7 @@ class VisualMap(private val map: GameMap, width: Int, height: Int, private val t
 		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
 		buildingsLayer.add(when(model) {
 			is BuildingLandingZone -> VisualBuildingLandingZone(cell.x, cell.y, tileW, tileH, model)
+			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell.x, cell.y, tileW, tileH, model)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}
