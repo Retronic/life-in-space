@@ -14,7 +14,8 @@ buildscript {
 		texturePacker = [
 				["resources/textures/terrain", "core/src/main/resources/textures", "terrain"],
 				["resources/textures/buildings", "core/src/main/resources/textures", "buildings"],
-				["resources/textures/ui", "core/src/main/resources/textures", "ui"]
+				["resources/textures/ui", "core/src/main/resources/textures", "ui"],
+				["resources/textures/characters", "core/src/main/resources/textures", "characters"]
 		]
 	}
 
