@@ -5,6 +5,7 @@ import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
+import com.retronicgames.utils.IntVector2
 
 class Mission1(private val game: LISGame) : Mission {
 	private companion object {
@@ -13,6 +14,7 @@ class Mission1(private val game: LISGame) : Mission {
 	}
 
 	override val map = GameMap(MAP_W, MAP_H)
+	override val initialCameraCenter: IntVector2
 
 	init {
 		val landingZone = BuildingLandingZone()
@@ -39,5 +41,7 @@ class Mission1(private val game: LISGame) : Mission {
 
 		map.createBuilding(landingZoneCell.x, landingZoneCell.y, landingZone)
 		map.createBuilding(livingBlockCell.x, livingBlockCell.y, livingBlock)
+
+		initialCameraCenter = IntVector2(landingZoneCell.x, landingZoneCell.y)
 	}
 }

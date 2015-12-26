@@ -68,6 +68,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	init {
 		cam.addListener(visualMap)
+		cam.translate((mission.initialCameraCenter.x * TILE_W).toFloat(), (mission.initialCameraCenter.y * TILE_H).toFloat())
 
 		Gdx.input.inputProcessor = InputMultiplexer(gui.inputProcessor(), inputProcessor)
 	}

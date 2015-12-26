@@ -21,7 +21,9 @@ class RGCamera(worldSizeW: Int, worldSizeH: Int) {
 	}
 
 	fun resize(width: Int, height: Int) {
-		cam.setToOrtho(false, width.toFloat(), height.toFloat())
+		cam.viewportWidth = width.toFloat()
+		cam.viewportHeight = height.toFloat()
+		cam.update()
 
 		fireChange()
 	}
