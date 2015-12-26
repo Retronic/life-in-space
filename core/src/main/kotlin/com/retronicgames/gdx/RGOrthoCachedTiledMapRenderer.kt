@@ -168,7 +168,7 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 	private fun renderObjectsOnlyLayer(layer: RGObjectsOnlyMapLayer) {
 		// FIXME: We're caching sprites outside of view!
 		for (obj in layer.objects) {
-			val sprite = (obj as VisualMapObject).sprite
+			val sprite = (obj as VisualMapObject<*>).sprite
 			sprite.color = obj.color
 
 			spriteCache.add(sprite)
@@ -281,8 +281,8 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 				val u2 = region.u2 - adjustX
 				val v2 = region.v + adjustY
 
-				val color = if ((cell as VisualCell).color != null) {
-					val newColor = cell.color!!
+				val color = if ((cell as VisualCell).tint != null) {
+					val newColor = cell.tint!!
 					Color.toFloatBits(newColor.r, newColor.g, newColor.b, layer.opacity)
 				} else {
 					defaultColor

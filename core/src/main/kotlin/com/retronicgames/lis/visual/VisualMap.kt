@@ -95,9 +95,9 @@ class VisualMap(private val map: GameMap, private val tileW: Int, private val ti
 		val model = cell.model
 
 		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
-		buildingsLayer.add(when(model) {
-			is BuildingLandingZone -> VisualBuildingLandingZone(cell.x, cell.y, tileW, tileH, model)
-			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell.x, cell.y, tileW, tileH, model)
+		buildingsLayer.add(when(cell.model) {
+			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>, tileW, tileH)
+			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>, tileW, tileH)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}
@@ -119,19 +119,32 @@ class VisualMap(private val map: GameMap, private val tileW: Int, private val ti
 
 	/// Cell marking ///
 
-	private var lastMarkedCell: VisualCell? = null
+	private var lastMarkedCell: Tintable? = null
 
-	fun markCell(coords: IntVector2, color: Color) {
-		lastMarkedCell?.color = null
-		val cell = cellAt(coords) ?: return
-		cell.color = color
-		lastMarkedCell = cell
+	fun markCell(coords: IntVector2, color: Color): Boolean {
+		val cell = map.cellAt(coords) ?: return false
+		lastMarkedCell?.tint = null
+		val visualCell = when (cell) {
+			is MapCell<*> -> {
+				when (cell.model) {
+					is Building<*> -> { buildingsLayer.objects.first() { (it as VisualMapObject<*>).baseCell == cell } as VisualMapObject<*>? }
+					else -> throw RuntimeException("Unknown model type! (${cell.model})")
+				}
+			}
+			is BaseMapCell -> { cellAt(coords) }
+			else -> throw RuntimeException("Unknown cell type! ($cell)")
+		} ?: return false
+
+		visualCell.tint = color
+		lastMarkedCell = visualCell
 
 		renderer.invalidateCache()
+
+		return true
 	}
 
 	fun unmarkAllCells() {
-		lastMarkedCell?.color = null
+		lastMarkedCell?.tint = null
 		lastMarkedCell = null
 	}
 }
