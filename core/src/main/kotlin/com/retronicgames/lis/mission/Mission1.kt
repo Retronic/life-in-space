@@ -33,42 +33,54 @@ class Mission1(private val game: LISGame) : Mission {
 	private companion object {
 		const val MAP_W = 30
 		const val MAP_H = 30
+
+		const val MAX_HOLES_3x3 = 60
+		const val MAX_HOLES_2x2 = 240
 	}
 
-	override val map = GameMap(MAP_W, MAP_H)
+	override val map: GameMap;
 	override val characterMap = GameCharacterMap()
 	override val initialCameraCenter: IntVector2
 
 	init {
-		val landingZone = BuildingLandingZone()
-		val livingBlock = BuildingLivingBlock()
+		var initialCell:BaseMapCell? = null
 
-		val sizeLandingZone = landingZone.data.size
-		val sizeLivingBlock = livingBlock.data.size
+		map = GameMap(MAP_W, MAP_H) {
+			makeHoles(MAX_HOLES_3x3, 3, 3)
+			makeHoles(MAX_HOLES_2x2, 2, 2)
 
-		var landingZoneCell: BaseMapCell? = null
-		var livingBlockCell: BaseMapCell? = null
-		var settlerInitialCell: BaseMapCell? = null
-		for (j in 0..10) {
-			landingZoneCell = map.randomEmptyCell(sizeLandingZone.x, sizeLandingZone.y) ?: continue
-			livingBlockCell = map.randomEmptyCellSurrounding(landingZoneCell, sizeLivingBlock.x, sizeLivingBlock.y) ?: continue
-			settlerInitialCell = map.randomEmptyCellSurrounding(landingZoneCell, -1, -1) ?: continue
+			val landingZone = BuildingLandingZone()
+			val livingBlock = BuildingLivingBlock()
 
-			break
+			val sizeLandingZone = landingZone.data.size
+			val sizeLivingBlock = livingBlock.data.size
+
+			var landingZoneCell: BaseMapCell? = null
+			var livingBlockCell: BaseMapCell? = null
+			var settlerInitialCell: BaseMapCell? = null
+			for (j in 0..10) {
+				landingZoneCell = randomEmptyCell(sizeLandingZone.x, sizeLandingZone.y) ?: continue
+				livingBlockCell = randomEmptyCellSurrounding(landingZoneCell, sizeLivingBlock.x, sizeLivingBlock.y) ?: continue
+				settlerInitialCell = randomEmptyCellSurrounding(landingZoneCell, -1, -1) ?: continue
+
+				break
+			}
+			if (landingZoneCell == null || livingBlockCell == null || settlerInitialCell == null) {
+				game.showErrorDialog("Please rerun the game, it's been impossible to create our map")
+				throw RuntimeException()
+			}
+
+			createBuilding(landingZoneCell.x, landingZoneCell.y, landingZone)
+			createBuilding(livingBlockCell.x, livingBlockCell.y, livingBlock)
+
+			characterMap.add(CharacterSettler(
+					settlerInitialCell.x * VisualMap.TILE_W + VisualMap.TILE_W / 2,
+					settlerInitialCell.y * VisualMap.TILE_H + VisualMap.TILE_H / 2
+			))
+
+			initialCell = landingZoneCell
 		}
-		if (landingZoneCell == null || livingBlockCell == null || settlerInitialCell == null) {
-			game.showErrorDialog("Please rerun the game, it's been impossible to create our map")
-			throw RuntimeException()
-		}
 
-		map.createBuilding(landingZoneCell.x, landingZoneCell.y, landingZone)
-		map.createBuilding(livingBlockCell.x, livingBlockCell.y, livingBlock)
-
-		initialCameraCenter = IntVector2(landingZoneCell.x, landingZoneCell.y)
-
-		characterMap.add(CharacterSettler(
-				settlerInitialCell.x * VisualMap.TILE_W + VisualMap.TILE_W / 2,
-				settlerInitialCell.y * VisualMap.TILE_H + VisualMap.TILE_H / 2
-		))
+		initialCameraCenter = IntVector2(initialCell!!.x, initialCell!!.y)
 	}
 }

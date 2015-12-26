@@ -17,7 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.model.buildings
+package com.retronicgames.utils
 
-abstract class AbstractBuilding<DataModelType : DataBuildingModel>(override val data: DataModelType) : Building<DataModelType> {
+import com.badlogic.gdx.utils.Disposable
+import com.badlogic.gdx.utils.Pool
+
+class RecyclableArray<T>(private val pool: Pool<T>, size: Int) : Iterable<T>, Disposable {
+	private val array = com.badlogic.gdx.utils.Array<T>(size)
+
+	val size:Int
+		get() = array.size
+
+	override fun iterator() = array.iterator()
+
+	override fun dispose() {
+		pool.freeAll(array)
+	}
+
+	operator fun get(index: Int) = array.get(index)
+
+	fun add(value: T) = array.add(value)
 }

@@ -22,15 +22,11 @@ package com.retronicgames.lis.model
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.ObjectSet
 import com.retronicgames.lis.model.buildings.Building
+import com.retronicgames.lis.model.buildings.DataBuildingModel
+import com.retronicgames.lis.model.map.PathFinding
 import com.retronicgames.utils.IntVector2
 
-class GameMap(val width: Int, val height: Int) {
-	companion object {
-		//		const val MAX_HOLES_4x4 = 15
-		const val MAX_HOLES_3x3 = 60
-		const val MAX_HOLES_2x2 = 240
-	}
-
+class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) {
 	private val gameMap = Array(height) { y -> Array(width) { x -> BaseMapCell(x, y) } }
 	private val randomMap = Array(height) { Array(width) { Math.abs(MathUtils.random.nextInt()) } }
 
@@ -42,16 +38,19 @@ class GameMap(val width: Int, val height: Int) {
 	@Transient
 	private val cellChangeListeners = com.badlogic.gdx.utils.Array<(x: Int, y: Int, cell: BaseMapCell) -> Unit>(2)
 
+	@Transient
+	val pathFinding: PathFinding;
+
 	init {
-		//		makeHoles(MAX_HOLES_4x4, 4, 4)
-		makeHoles(MAX_HOLES_3x3, 3, 3)
-		makeHoles(MAX_HOLES_2x2, 2, 2)
+		initializer()
+
+		pathFinding = PathFinding(this)
 	}
 
 	/**
 	 * Makes between 0 and [maxCount] (so it can be less than expected)
 	 */
-	private fun makeHoles(maxCount: Int, holeW: Int, holeH: Int) {
+	fun makeHoles(maxCount: Int, holeW: Int, holeH: Int) {
 		for (j in 0..maxCount - 1) {
 			val x = MathUtils.random(width - 1)
 			if (x > width - holeW) continue
@@ -62,7 +61,7 @@ class GameMap(val width: Int, val height: Int) {
 
 			val newCell = BaseMapCell(x, y, holeW, holeH)
 			forEachInRange(true, newCell) { x, y, row, oldCell ->
-				if (oldCell.w != 1 || oldCell.h != 1) valid = false
+				if (oldCell.javaClass != BaseMapCell::class.java || oldCell.w != 1 || oldCell.h != 1) valid = false
 			}
 
 			if (!valid) continue
@@ -106,7 +105,7 @@ class GameMap(val width: Int, val height: Int) {
 	 */
 	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
 
-	fun createBuilding(x: Int, y: Int, model: Building<out DataModel>) = addTopCell(x, y, model)
+	fun createBuilding(x: Int, y: Int, model: Building<out DataBuildingModel>) = addTopCell(x, y, model)
 
 	private fun <ModelType : Model<out DataModel>> addTopCell(x: Int, y: Int, model: ModelType): Boolean {
 		val cell = cellAt(x, y) ?: return false
@@ -133,7 +132,7 @@ class GameMap(val width: Int, val height: Int) {
 	fun random(x: Int, y: Int) = randomMap[y][x]
 	fun <T> random(x: Int, y: Int, array: com.badlogic.gdx.utils.Array<T>) = array[randomMap[y][x] % array.size]
 
-	fun cellAt(x:Int, y:Int) = gameMap.getOrNull(y)?.getOrNull(x)
+	fun cellAt(x: Int, y: Int) = gameMap.getOrNull(y)?.getOrNull(x)
 	fun cellAt(coords: IntVector2) = cellAt(coords.x, coords.y)
 
 	fun randomEmptyCell(w: Int, h: Int): BaseMapCell? {

@@ -6,6 +6,7 @@ buildscript {
 	ext {
 		versionKotlin = "1.0.0-beta-4584"
 		versionGdx = "1.7.2"
+		versionGdxAI = "1.7.0"
 		versionLwjgl = "1.7.2"
 		versionJglfw = "1.7.2-SNAPSHOT"
 		versionRoboVM = '1.12.0'
@@ -62,6 +63,7 @@ project("core") {
 	dependencies {
 		compile "com.badlogicgames.gdx:gdx:$versionGdx"
 		compile "com.badlogicgames.gdx:gdx-freetype:$versionGdx"
+		compile "com.badlogicgames.gdx:gdx-ai:$versionGdxAI"
 	}
 }
 

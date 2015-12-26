@@ -23,6 +23,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
+import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.mission.Mission
@@ -109,6 +110,8 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	@Suppress("NOTHING_TO_INLINE")
 	private inline fun update(delta: Float) {
+		GdxAI.getTimepiece().update(delta);
+
 		visualMap.update(delta)
 		gui.update(delta)
 	}
