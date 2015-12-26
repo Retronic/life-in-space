@@ -18,7 +18,7 @@ class VisualMap(private val map: GameMap, width: Int, height: Int, tileW: Int, t
 
 	private val renderer = RGOrthoCachedTiledMapRenderer(visualMap)
 	private val tileset = TiledMapTileSet()
-	private val layer = TiledMapTileLayer(width, height, tileW, tileH)
+	private val baseLayer = TiledMapTileLayer(width, height, tileW, tileH)
 
 	init {
 		val textureAtlas = Assets.textureAtlas("terrain") ?: throw RuntimeException("Cannot load terrain!")
@@ -41,7 +41,7 @@ class VisualMap(private val map: GameMap, width: Int, height: Int, tileW: Int, t
 		}
 
 		visualMap.tileSets.addTileSet(tileset)
-		visualMap.layers.add(layer)
+		visualMap.layers.add(baseLayer)
 
 		rebuild(map)
 	}
@@ -54,7 +54,7 @@ class VisualMap(private val map: GameMap, width: Int, height: Int, tileW: Int, t
 		map.forEachCell(false) { x, y, cell ->
 			val tileIdxs = size2idx[cell.h - 1][cell.w - 1]!!
 			val randomIdx = map.random(x, y, tileIdxs)
-			layer.setCell(x, y, VisualCell(cell, tileset.getTile(randomIdx)))
+			baseLayer.setCell(x, y, VisualCell(cell, tileset.getTile(randomIdx)))
 		}
 		renderer.invalidateCache()
 	}
@@ -69,10 +69,10 @@ class VisualMap(private val map: GameMap, width: Int, height: Int, tileW: Int, t
 
 	private fun cellAt(coords: IntVector2): VisualCell? {
 		val cell = map.cellAt(coords) ?: return null
-		return layer.getCell(cell.x, cell.y) as VisualCell?
+		return baseLayer.getCell(cell.x, cell.y) as VisualCell?
 	}
 
-	fun screen2cellCoords(screenX: Int, screenY: Int) = renderer.screen2cellCoords(layer.width, layer.height, layer.tileWidth, layer.tileHeight, screenX, screenY)
+	fun screen2cellCoords(screenX: Int, screenY: Int) = renderer.screen2cellCoords(baseLayer.width, baseLayer.height, baseLayer.tileWidth, baseLayer.tileHeight, screenX, screenY)
 
 	/// Cell marking ///
 
