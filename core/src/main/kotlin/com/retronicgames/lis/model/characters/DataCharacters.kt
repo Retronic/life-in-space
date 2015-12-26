@@ -17,14 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.mission
+package com.retronicgames.lis.model.characters
 
-import com.retronicgames.lis.model.GameCharacterMap
-import com.retronicgames.lis.model.GameMap
+import com.retronicgames.lis.model.DataModel
 import com.retronicgames.utils.IntVector2
 
-interface Mission {
-	val map: GameMap
-	val characterMap : GameCharacterMap
-	val initialCameraCenter: IntVector2
+object DataCharacterSettler : DataModel {
+	override val id = "settler"
+	override val size = IntVector2(1, 1)
+
 }

@@ -19,7 +19,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Batch.*
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.SpriteCache
 import com.badlogic.gdx.maps.MapLayer
 import com.badlogic.gdx.maps.MapObject
@@ -31,6 +33,7 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Disposable
 import com.retronicgames.lis.visual.VisualCell
+import com.retronicgames.lis.visual.VisualMapCharacter
 import com.retronicgames.lis.visual.VisualMapObject
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
@@ -53,6 +56,7 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 	}
 
 	val spriteCache: SpriteCache
+	private var objectBatch: Batch = SpriteBatch()
 
 	protected val vertices = FloatArray(20)
 	protected var blending: Boolean = false
@@ -85,16 +89,12 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 
 	override fun setView(camera: OrthographicCamera) {
 		spriteCache.projectionMatrix = camera.combined
+		objectBatch.projectionMatrix = camera.combined
+
 		val width = camera.viewportWidth * camera.zoom + maxTileWidth * 2f * unitScale
 		val height = camera.viewportHeight * camera.zoom + maxTileHeight * 2f * unitScale
-		viewBounds.set(camera.position.x - width / 2, camera.position.y - height / 2, width, height)
 
-		if (canCacheMoreW && viewBounds.x < cacheBounds.x - tolerance ||
-				canCacheMoreS && viewBounds.y < cacheBounds.y - tolerance ||
-				canCacheMoreE && viewBounds.x + viewBounds.width > cacheBounds.x + cacheBounds.width + tolerance ||
-				canCacheMoreN && viewBounds.y + viewBounds.height > cacheBounds.y + cacheBounds.height + tolerance
-		)
-			isCached = false
+		_setView(camera.combined, camera.position.x - width / 2, camera.position.y - height / 2, width, height)
 	}
 
 	override fun setView(projection: Matrix4, x: Float, y: Float, width: Float, height: Float) {
@@ -102,11 +102,18 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 		var y = y
 		var width = width
 		var height = height
-		spriteCache.projectionMatrix = projection
 		x -= maxTileWidth * unitScale
 		y -= maxTileHeight * unitScale
 		width += maxTileWidth * 2f * unitScale
 		height += maxTileHeight * 2f * unitScale
+
+		_setView(projection, x, y, width, height)
+	}
+
+	private inline fun _setView(projection: Matrix4, x: Float, y: Float, width: Float, height: Float) {
+		spriteCache.projectionMatrix = projection
+		objectBatch.projectionMatrix = projection
+
 		viewBounds.set(x, y, width, height)
 
 		if (canCacheMoreW && viewBounds.x < cacheBounds.x - tolerance ||
@@ -157,7 +164,9 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 				if (needsBlending && !blending) enableBlending()
 				spriteCache.draw(i)
 				if (needsBlending && !blending) disableBlending()
-				renderObjects(layer)
+
+				// FIXME: [needsBlending] is not the right name for this condition, but for now it's exactly the same (needsBlending means "this is a objects only layer", at least for now)
+				if (!needsBlending) renderObjects(layer)
 			}
 			i++
 		}
@@ -212,7 +221,8 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 				spriteCache.draw(i)
 				if (needsBlending && !blending) disableBlending()
 
-				renderObjects(layer)
+				// FIXME: [needsBlending] is not the right name for this condition, but for now it's exactly the same (needsBlending means "this is a objects only layer", at least for now)
+				if (!needsBlending) renderObjects(layer)
 			}
 		}
 		spriteCache.end()
@@ -229,12 +239,18 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 	}
 
 	override fun renderObjects(layer: MapLayer) {
+		if (layer.objects.count < 1) return
+		spriteCache.end()
+		objectBatch.begin()
 		for (`object` in layer.objects) {
 			renderObject(`object`)
 		}
+		objectBatch.end()
+		spriteCache.begin()
 	}
 
-	override fun renderObject(`object`: MapObject) {
+	override fun renderObject(obj: MapObject) {
+		(obj as VisualMapCharacter).sprite.draw(objectBatch)
 	}
 
 	override fun renderTileLayer(layer: TiledMapTileLayer) {
@@ -447,6 +463,7 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 
 	override fun dispose() {
 		spriteCache.dispose()
+		objectBatch.dispose()
 	}
 
 	fun screen2cellCoords(layerWidth: Int, layerHeight: Int, tileWidth: Float, tileHeight: Float, screenX: Int, screenY: Int): IntVector2 {

@@ -17,26 +17,25 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.visual.buildings
+package com.retronicgames.lis.visual.characters
 
 import com.retronicgames.lis.manager.Assets
-import com.retronicgames.lis.model.MapCell
-import com.retronicgames.lis.model.buildings.AbstractBuilding
+import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.DataVisual
-import com.retronicgames.lis.visual.VisualMap
-import com.retronicgames.lis.visual.VisualMapObject
+import com.retronicgames.lis.visual.VisualMapCharacter
 
-abstract class AbstractVisualBuilding<ModelType : AbstractBuilding<*>, VisualModelType : DataVisual>(
-		cell: MapCell<ModelType>,
-		val visualDataModel: VisualModelType) : VisualMapObject<ModelType>(cell, Assets.sprite("buildings", cell.model.data.id)) {
+abstract class AbstractVisualCharacter<CharacterType : GameCharacter<*, *>, VisualModelType : DataVisual>(character: CharacterType, val visualDataModel: VisualModelType) :
+		VisualMapCharacter(Assets.sprite("characters", "${character.data.id}_${character.state.name.toLowerCase()}", 0)) {
 	init {
+		val position = character.position
 		val offset = visualDataModel.offset
 
+		val xPos = position.x.toFloat()
+		val yPos = position.y.toFloat()
 		val xOff = offset.x.toFloat()
 		val yOff = offset.y.toFloat()
 
-		sprite.setPosition((cell.x * VisualMap.TILE_W).toFloat() - xOff, (cell.y * VisualMap.TILE_H).toFloat() - yOff)
+		sprite.setPosition(xPos - xOff, yPos - yOff)
 		sprite.setOrigin(xOff, yOff)
 	}
 }
-

@@ -1,3 +1,22 @@
+/**
+ * Copyright (C) 2015 Oleg Dolya
+ * Copyright (C) 2015 Eduardo Garcia
+ *
+ * This file is part of Life in Space, by Retronic Games
+ *
+ * Life in Space is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Life in Space is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.retronicgames.lis.screen
 
 import com.badlogic.gdx.Gdx
@@ -18,11 +37,8 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 		const val DRAG_THRESHOLD = 10
 	}
 
-	private val TILE_W = 32;
-	private val TILE_H = 32;
-
-	private val visualMap = VisualMap(mission.map, TILE_W, TILE_H)
-	private val cam = RGCamera(mission.map.width * TILE_W, mission.map.height * TILE_H)
+	private val visualMap = VisualMap(mission.map, mission.characterMap)
+	private val cam = RGCamera(mission.map.width * VisualMap.TILE_W, mission.map.height * VisualMap.TILE_H)
 
 	private val gui = LISGUI()
 
@@ -68,7 +84,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	init {
 		cam.addListener(visualMap)
-		cam.translate((mission.initialCameraCenter.x * TILE_W).toFloat(), (mission.initialCameraCenter.y * TILE_H).toFloat())
+		cam.translate((mission.initialCameraCenter.x * VisualMap.TILE_W).toFloat(), (mission.initialCameraCenter.y * VisualMap.TILE_H).toFloat())
 
 		Gdx.input.inputProcessor = InputMultiplexer(gui.inputProcessor(), inputProcessor)
 	}

@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.mission
+package com.retronicgames.lis.visual
 
-import com.retronicgames.lis.model.GameCharacterMap
-import com.retronicgames.lis.model.GameMap
-import com.retronicgames.utils.IntVector2
+import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.maps.MapObject
 
-interface Mission {
-	val map: GameMap
-	val characterMap : GameCharacterMap
-	val initialCameraCenter: IntVector2
+// FIXME: this should be VisualMapObject, but that one should be a bit more generic
+open class VisualMapCharacter(val sprite: Sprite) : MapObject() {
+
 }

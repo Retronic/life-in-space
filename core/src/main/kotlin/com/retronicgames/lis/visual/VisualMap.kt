@@ -1,3 +1,22 @@
+/**
+ * Copyright (C) 2015 Oleg Dolya
+ * Copyright (C) 2015 Eduardo Garcia
+ *
+ * This file is part of Life in Space, by Retronic Games
+ *
+ * Life in Space is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Life in Space is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.retronicgames.lis.visual
 
 import com.badlogic.gdx.graphics.Color
@@ -10,23 +29,33 @@ import com.retronicgames.gdx.RGObjectsOnlyMapLayer
 import com.retronicgames.gdx.RGOrthoCachedTiledMapRenderer
 import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.BaseMapCell
+import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.MapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
+import com.retronicgames.lis.model.characters.CharacterSettler
+import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
 import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
+import com.retronicgames.lis.visual.characters.VisualCharacterSettler
 import com.retronicgames.utils.CameraListener
 import com.retronicgames.utils.IntVector2
 
-class VisualMap(private val map: GameMap, private val tileW: Int, private val tileH: Int) : CameraListener {
+@Suppress("NOTHING_TO_INLINE")
+class VisualMap(private val map: GameMap, private val characterMap: GameCharacterMap) : CameraListener {
+	companion object {
+		val TILE_W = 32
+		val TILE_H = 32
+	}
+
 	private val visualMap = TiledMap()
 	private val baseSize2idx = Array(3) { Array<com.badlogic.gdx.utils.Array<Int>?>(3) { null } }
 
 	private val renderer = RGOrthoCachedTiledMapRenderer(visualMap)
 	private val tileset = TiledMapTileSet()
-	private val baseLayer = TiledMapTileLayer(map.width, map.height, tileW, tileH)
+	private val baseLayer = TiledMapTileLayer(map.width, map.height, TILE_W, TILE_H)
 	private val buildingsLayer = RGObjectsOnlyMapLayer()
 
 	init {
@@ -68,10 +97,12 @@ class VisualMap(private val map: GameMap, private val tileW: Int, private val ti
 		map.forEachCell(false) { x, y, row, cell ->
 			rebuildCell(x, y, cell)
 		}
+		characterMap.forEach {
+			rebuildCharacter(it)
+		}
 		renderer.invalidateCache()
 	}
 
-	@Suppress("NOTHING_TO_INLINE")
 	private inline fun rebuildCell(x: Int, y: Int, cell: BaseMapCell) {
 		when (cell) {
 			is MapCell<*> -> {
@@ -91,13 +122,22 @@ class VisualMap(private val map: GameMap, private val tileW: Int, private val ti
 		}
 	}
 
+	private inline fun rebuildCharacter(character: GameCharacter<*, *>) {
+		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
+		val visualCharacter = when (character) {
+			is CharacterSettler -> VisualCharacterSettler(character)
+			else -> throw RuntimeException("Unknown character type! ($character)")
+		}
+		baseLayer.objects.add(visualCharacter)
+	}
+
 	private fun createBuilding(cell: MapCell<Building<*>>) {
 		val model = cell.model
 
 		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
 		buildingsLayer.add(when(cell.model) {
-			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>, tileW, tileH)
-			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>, tileW, tileH)
+			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>)
+			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}
