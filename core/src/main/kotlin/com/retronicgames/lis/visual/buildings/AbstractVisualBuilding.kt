@@ -2,15 +2,18 @@ package com.retronicgames.lis.visual.buildings
 
 import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.buildings.AbstractBuilding
+import com.retronicgames.lis.visual.DataVisual
 import com.retronicgames.lis.visual.VisualMapObject
-import com.retronicgames.utils.IntVector2
 
-abstract class AbstractVisualBuilding<ModelType : AbstractBuilding>(x: Int, y: Int, tileW: Int, tileH: Int, val model: ModelType) : VisualMapObject(Assets.sprite("buildings", model.id)) {
-	// This offset is part of the instance, instead of the class. Not optimal, but will do for now...
-	open val offset = IntVector2.ZERO
-
+abstract class AbstractVisualBuilding<ModelType : AbstractBuilding<*>, VisualModelType : DataVisual>(
+		x: Int,
+		y: Int,
+		tileW: Int,
+		tileH: Int,
+		val model: ModelType,
+		val visualDataModel: VisualModelType) : VisualMapObject(Assets.sprite("buildings", model.data.id)) {
 	init {
-		sprite.setPosition((x * tileW + offset.x).toFloat(), (y * tileH + offset.y).toFloat())
+		sprite.setPosition((x * tileW + visualDataModel.offset.x).toFloat(), (y * tileH + visualDataModel.offset.y).toFloat())
 	}
 }
 
