@@ -37,4 +37,6 @@ class RecyclableArray<T>(private val pool: Pool<T>, size: Int) : Iterable<T>, Di
 	operator fun get(index: Int) = array.get(index)
 
 	fun add(value: T) = array.add(value)
+
+	override fun toString() = "[${array.toString(", ")}]"
 }

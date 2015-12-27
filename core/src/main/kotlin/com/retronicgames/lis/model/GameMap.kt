@@ -20,7 +20,6 @@
 package com.retronicgames.lis.model
 
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.utils.ObjectSet
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.DataBuildingModel
 import com.retronicgames.lis.model.map.PathFinding

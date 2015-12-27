@@ -26,7 +26,6 @@ import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.characters.CharacterSettler
-import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
 
 class Mission1(private val game: LISGame) : Mission {
@@ -73,10 +72,7 @@ class Mission1(private val game: LISGame) : Mission {
 			createBuilding(landingZoneCell.x, landingZoneCell.y, landingZone)
 			createBuilding(livingBlockCell.x, livingBlockCell.y, livingBlock)
 
-			characterMap.add(CharacterSettler(
-					settlerInitialCell.x * VisualMap.TILE_W + VisualMap.TILE_W / 2,
-					settlerInitialCell.y * VisualMap.TILE_H + VisualMap.TILE_H / 2
-			))
+			characterMap.add(CharacterSettler(this, settlerInitialCell))
 
 			initialCell = landingZoneCell
 		}
