@@ -20,32 +20,102 @@
 package com.retronicgames.lis.model.characters
 
 import com.retronicgames.lis.model.BaseMapCell
-import com.retronicgames.lis.model.DataModel
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
+import com.retronicgames.utils.RecyclableArray
+import com.retronicgames.utils.value.MutableValue
 
-abstract class AbstractCharacter<DataType : DataModel, StateType : Enum<StateType>>(
+abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum<StateType>>(
 		private val map: GameMap,
 		initialCell: BaseMapCell,
 		override val data: DataType) : GameCharacter<DataType, StateType> {
 	override val position: IntVector2
-	override var currentCell = initialCell
+	override val currentCell = MutableValue(initialCell)
+
+	private var currentPath: RecyclableArray<IntVector2>? = null
+	private var currentPathIdx = 0
+	private val currentTarget = MutableIntVector2()
 
 	init {
 		// FIXME: Not sure if it's a good idea having the pixel position in the model
-		position = MutableIntVector2(
-				currentCell.x * VisualMap.TILE_W + VisualMap.TILE_W / 2,
-				currentCell.y * VisualMap.TILE_H + VisualMap.TILE_H / 2
-		)
+		val cell = currentCell.value
+		position = MutableIntVector2()
+		VisualMap.cellToPixelPosition(cell, position as MutableIntVector2)
 	}
 
 	override fun moveTo(cell: BaseMapCell?): Boolean {
 		if (cell == null) return false
 
+		resetPath()
+
+		val currentCell = currentCell.value
 		val path = map.pathFinding.findPath(currentCell.x, currentCell.y, cell.x, cell.y)
-		println(path)
-		return path.size > 0
+		currentPath = path
+
+		val pathEmpty = path.size <= 0
+
+		if (!pathEmpty) {
+			nextPathStep(0f)
+		}
+
+		return pathEmpty
+	}
+
+	private fun resetPath() {
+		currentPath?.dispose()
+		currentPath = null
+		currentPathIdx = -1
+		currentTarget.set(Int.MIN_VALUE, Int.MIN_VALUE)
+	}
+
+	override fun update(delta: Float) {
+		if (currentPath == null) return
+
+		doMove(delta)
+	}
+
+	fun doMove(delta: Float) {
+		val deltaX = (currentTarget.x - position.x).toDouble();
+		val deltaY = (currentTarget.y - position.y).toDouble();
+		val distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		if (distance <= 0.0001f) {
+			nextPathStep(delta)
+			return
+		}
+
+		val speedTime = data.speed * delta
+		if (speedTime > distance) {
+			(position as MutableIntVector2).set(currentTarget.x, currentTarget.y);
+		} else {
+			var offsetX = (deltaX / distance) * speedTime;
+			var offsetY = (deltaY / distance) * speedTime;
+
+			if (offsetX > 0 && offsetX < 1) { offsetX = 1.0 }
+			if (offsetY > 0 && offsetY < 1) { offsetY = 1.0 }
+
+			(position as MutableIntVector2).set((position.x + offsetX).toInt(), (position.y + offsetY).toInt());
+		}
+	}
+
+	private fun nextPathStep(delta: Float) {
+		val path = currentPath!!
+
+		if (currentPathIdx >= path.size - 1) {
+			resetPath()
+			fireTargetReached()
+			return
+		}
+
+		val coords = path[++currentPathIdx]
+		VisualMap.cellCoordsToPixelPosition(coords, currentTarget)
+
+		doMove(delta)
+	}
+
+	private fun fireTargetReached() {
+
 	}
 }

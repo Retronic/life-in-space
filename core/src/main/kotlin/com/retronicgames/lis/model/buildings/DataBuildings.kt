@@ -27,6 +27,7 @@ interface DataBuildingModel : DataModel {
 	 * Specifies if a character / vehicle can pass through this building (for example, the Landing Zone is passable)
 	 */
 	val passable: Boolean
+	val size: IntVector2
 }
 
 object DataBuildingLandingZone : DataBuildingModel {

@@ -112,6 +112,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 	private inline fun update(delta: Float) {
 		GdxAI.getTimepiece().update(delta);
 
+		mission.update(delta)
 		visualMap.update(delta)
 		gui.update(delta)
 	}

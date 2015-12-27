@@ -1,14 +1,16 @@
 package com.retronicgames.lis.model.characters
 
 import com.retronicgames.lis.model.BaseMapCell
-import com.retronicgames.lis.model.DataModel
 import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.value.ReadOnlyValue
 
-interface GameCharacter<DataType : DataModel, StateType : Enum<StateType>> {
+interface GameCharacter<DataType : DataCharacterModel, StateType : Enum<StateType>> {
 	val data: DataType
-	val state: StateType
+	val state: ReadOnlyValue<StateType>
 	val position: IntVector2
-	var currentCell: BaseMapCell
+	val currentCell: ReadOnlyValue<BaseMapCell>
+
+	fun update(delta: Float)
 
 	fun moveTo(cell: BaseMapCell?): Boolean
 }

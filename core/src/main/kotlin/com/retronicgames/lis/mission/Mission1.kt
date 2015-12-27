@@ -21,14 +21,13 @@ package com.retronicgames.lis.mission
 
 import com.retronicgames.lis.LISGame
 import com.retronicgames.lis.model.BaseMapCell
-import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.utils.IntVector2
 
-class Mission1(private val game: LISGame) : Mission {
+class Mission1(private val game: LISGame) : Mission() {
 	private companion object {
 		const val MAP_W = 30
 		const val MAP_H = 30
@@ -38,7 +37,6 @@ class Mission1(private val game: LISGame) : Mission {
 	}
 
 	override val map: GameMap;
-	override val characterMap = GameCharacterMap()
 	override val initialCameraCenter: IntVector2
 
 	init {

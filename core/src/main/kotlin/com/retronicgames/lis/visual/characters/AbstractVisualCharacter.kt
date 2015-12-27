@@ -25,7 +25,7 @@ import com.retronicgames.lis.visual.DataVisual
 import com.retronicgames.lis.visual.VisualMapCharacter
 
 abstract class AbstractVisualCharacter<CharacterType : GameCharacter<*, *>, VisualModelType : DataVisual>(character: CharacterType, val visualDataModel: VisualModelType) :
-		VisualMapCharacter(Assets.sprite("characters", "${character.data.id}_${character.state.name.toLowerCase()}", 0)) {
+		VisualMapCharacter(Assets.sprite("characters", "${character.data.id}_${character.state.value.name.toLowerCase()}", 0)) {
 	init {
 		val position = character.position
 		val offset = visualDataModel.offset
@@ -37,5 +37,9 @@ abstract class AbstractVisualCharacter<CharacterType : GameCharacter<*, *>, Visu
 
 		sprite.setPosition(xPos - xOff, yPos - yOff)
 		sprite.setOrigin(xOff, yOff)
+
+		character.position.onChange { oldX, oldY, newX, newY ->
+			sprite.setPosition(newX - xOff, newY - yOff)
+		}
 	}
 }

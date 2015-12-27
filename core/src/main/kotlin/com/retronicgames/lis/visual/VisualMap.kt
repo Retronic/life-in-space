@@ -42,12 +42,26 @@ import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
 import com.retronicgames.lis.visual.characters.VisualCharacterSettler
 import com.retronicgames.utils.CameraListener
 import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.MutableIntVector2
 
 @Suppress("NOTHING_TO_INLINE")
 class VisualMap(private val map: GameMap, private val characterMap: GameCharacterMap) : CameraListener {
 	companion object {
 		val TILE_W = 32
 		val TILE_H = 32
+
+		fun cellToPixelPosition(cell: BaseMapCell, position: MutableIntVector2, offsetX: Float = 0.5f, offsetY: Float = 0.5f) {
+			position.set(
+					cell.x * TILE_W + (TILE_W * offsetX).toInt(),
+					cell.y * TILE_H + (TILE_H * offsetY).toInt()
+			)
+		}
+		fun cellCoordsToPixelPosition(cellCoords: IntVector2, position: MutableIntVector2, offsetX: Float = 0.5f, offsetY: Float = 0.5f) {
+			position.set(
+					cellCoords.x * TILE_W + (TILE_W * offsetX).toInt(),
+					cellCoords.y * TILE_H + (TILE_H * offsetY).toInt()
+			)
+		}
 	}
 
 	private val visualMap = TiledMap()

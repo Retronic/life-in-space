@@ -20,10 +20,12 @@
 package com.retronicgames.lis.model.characters
 
 import com.retronicgames.lis.model.DataModel
-import com.retronicgames.utils.IntVector2
 
-object DataCharacterSettler : DataModel {
+interface DataCharacterModel : DataModel {
+	val speed: Float    // pixels per millisecond
+}
+
+object DataCharacterSettler : DataCharacterModel {
 	override val id = "settler"
-	override val size = IntVector2(1, 1)
-
+	override val speed = 0.02f
 }

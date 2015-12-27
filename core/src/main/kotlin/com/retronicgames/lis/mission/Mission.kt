@@ -23,8 +23,14 @@ import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.utils.IntVector2
 
-interface Mission {
-	val map: GameMap
-	val characterMap : GameCharacterMap
-	val initialCameraCenter: IntVector2
+abstract class Mission {
+	abstract val map: GameMap
+	abstract val initialCameraCenter: IntVector2
+
+	val characterMap = GameCharacterMap()
+
+	fun update(delta: Float) {
+		map.update(delta)
+		characterMap.update(delta)
+	}
 }

@@ -21,9 +21,10 @@ package com.retronicgames.lis.model.characters
 
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameMap
+import com.retronicgames.utils.value.MutableValue
 
 class CharacterSettler(map: GameMap, initialCell: BaseMapCell) : AbstractCharacter<DataCharacterSettler, StateSettler>(map, initialCell, DataCharacterSettler) {
-	override val state = StateSettler.IDLE
+	override val state = MutableValue(StateSettler.IDLE)
 }
 
 enum class StateSettler {

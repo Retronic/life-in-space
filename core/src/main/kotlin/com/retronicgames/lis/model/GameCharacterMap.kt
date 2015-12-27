@@ -10,4 +10,8 @@ class GameCharacterMap : Iterable<GameCharacter<*, *>> {
 	fun add(character: GameCharacter<*, *>) {
 		characters.add(character)
 	}
+
+	fun update(delta:Float) {
+		characters.forEach { it.update(delta) }
+	}
 }

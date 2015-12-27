@@ -44,6 +44,10 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 		pathFinding = PathFinding(this)
 	}
 
+	fun update(delta: Float) {
+		// Do nothing... for now
+	}
+
 	/**
 	 * Makes between 0 and [maxCount] (so it can be less than expected)
 	 */
@@ -104,7 +108,7 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 
 	fun createBuilding(x: Int, y: Int, model: Building<out DataBuildingModel>) = addTopCell(x, y, model)
 
-	private fun <ModelType : Model<out DataModel>> addTopCell(x: Int, y: Int, model: ModelType): Boolean {
+	private fun <ModelType : Model<out DataBuildingModel>> addTopCell(x: Int, y: Int, model: ModelType): Boolean {
 		val cell = cellAt(x, y) ?: return false
 
 		val size = model.data.size
