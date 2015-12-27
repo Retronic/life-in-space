@@ -103,6 +103,7 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 	private fun nextPathStep(delta: Float) {
 		val path = currentPath!!
 
+		if (currentPathIdx >= 0) currentCell.value = map.cellAt(path[currentPathIdx])!!
 		if (currentPathIdx >= path.size - 1) {
 			resetPath()
 			fireTargetReached()
