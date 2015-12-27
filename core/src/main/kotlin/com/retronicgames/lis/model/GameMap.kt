@@ -32,8 +32,6 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 
 	@Transient
 	private val tempCellArray = com.badlogic.gdx.utils.Array<BaseMapCell>(16)
-	@Transient
-	private val tempCellSet = ObjectSet<BaseMapCell>(16)
 
 	@Transient
 	private val cellChangeListeners = com.badlogic.gdx.utils.Array<(x: Int, y: Int, cell: BaseMapCell) -> Unit>(2)
@@ -147,15 +145,15 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 	}
 
 	fun randomEmptyCellSurrounding(surroundedCell: BaseMapCell, targetW: Int, targetH: Int): BaseMapCell? {
-		tempCellSet.clear()
+		tempCellArray.clear()
 
 		val x = surroundedCell.x
 		val y = surroundedCell.y
 		val w = surroundedCell.w
 		val h = surroundedCell.h
 		val callback = { x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell ->
-			if (targetW <= 0 || targetH <= 0 || (cell.w == targetW && cell.h == targetH)) {
-				tempCellSet.add(cell)
+			if (targetW <= 0 || targetH <= 0 || (cell.w == targetW && cell.h == targetH) && !tempCellArray.contains(cell, true)) {
+				tempCellArray.add(cell)
 			}
 		}
 		forEachInRange(true, x - 1, y - 1, w + 2, 1, callback)
@@ -164,7 +162,7 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 		forEachInRange(true, x - 1, y - 1, 1, h + 2, callback)
 		forEachInRange(true, x + w, y - 1, 1, h + 2, callback)
 
-		return tempCellSet.iterator().toArray().random()
+		return tempCellArray.random()
 	}
 
 	fun addOnCellListener(listener: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {
