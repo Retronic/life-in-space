@@ -93,7 +93,9 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 	private fun performAction(screenX: Int, screenY: Int) {
 		val coords = visualMap.screen2cellCoords(screenX, screenY)
 		visualMap.markCell(coords)
-		gui.showList("dialog.build.title", *DataBuildings.values())
+		gui.showList("dialog.build.title", *DataBuildings.values()) { success ->
+			visualMap.unmarkCells()
+		}
 	}
 
 	override fun resize(width: Int, height: Int) {

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.retronicgames.lis.manager.Assets
+import com.retronicgames.utils.RGDialog
 
 object LISSkin : Skin() {
 	// FIXME: All these fonts should be part of a texture atlas, instead of creating a texture per font
@@ -20,6 +21,7 @@ object LISSkin : Skin() {
 
 	init {
 		addStyleLabel()
+		addStyleButton()
 		addStyleDialog()
 		addStyleList()
 		addStyleScrollPane()
@@ -28,6 +30,16 @@ object LISSkin : Skin() {
 	private fun addStyleLabel() {
 		val style = Label.LabelStyle(fontDefault, Color.BLACK)
 		add("default", style)
+	}
+
+	private fun addStyleButton() {
+		val style = Button.ButtonStyle(drawable9("buttonUp"), drawable9("buttonDown"), null)
+		style.over = drawable9("buttonOver")
+		add("default", style)
+
+		val styleText = TextButton.TextButtonStyle(drawable9("buttonUp"), drawable9("buttonDown"), null, fontDefaultBold)
+		styleText.over = drawable9("buttonOver")
+		add("default", styleText)
 	}
 
 	private fun addStyleDialog() {
@@ -52,6 +64,15 @@ object LISSkin : Skin() {
 		val style = Button.ButtonStyle(upDrawable, downDrawable, null)
 
 		return Button(style)
+	}
+
+	fun dialog(title: String): RGDialog {
+		val result = RGDialog(title, this)
+
+		result.isMovable = false
+		result.isModal = true
+
+		return result
 	}
 
 	private fun createFont(fontName: String, fontPath: String, fontSize: Int): BitmapFont {
