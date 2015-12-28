@@ -139,7 +139,7 @@ private class PathFindingCell(val x: Int, val y: Int) : IndexedNode<PathFindingC
 	                          x: Int, y: Int) {
 		val cell = map.cellAt(x, y) ?: return
 		val passable = when {
-			cell is MapCell<*> && cell.model is Building<*> && cell.model.data.passable -> true
+			cell is MapCell<*> && cell.model is Building && cell.model.data.passable -> true
 			cell.javaClass == BaseMapCell::class.java -> true
 			else -> false
 		}

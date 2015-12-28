@@ -7,7 +7,10 @@ import com.retronicgames.lis.ui.LISSkin.button
 import com.retronicgames.utils.RGGUI
 
 class LISGUI : RGGUI() {
-	private val i18n = I18NBundle.createBundle(Gdx.files.internal("i18n/main"))
+	companion object {
+		val i18n = I18NBundle.createBundle(Gdx.files.internal("i18n/main"))
+	}
+
 	private val dialog = Dialog("", LISSkin)
 
 	init {
@@ -25,6 +28,14 @@ class LISGUI : RGGUI() {
 	fun showModal(i18nKey: String) {
 		dialog.contentTable.clear()
 		dialog.contentTable.add(LISSkin.wrappedLabel(i18n.get(i18nKey))).fillX().expandX().width(200f).row()
+		dialog.show(stage)
+	}
+
+	fun <T> showList(titleI18N: String, vararg items: T) {
+		dialog.contentTable.clear()
+		dialog.titleLabel.setText(i18n.get(titleI18N))
+		val list = LISSkin.scrollList(*items)
+		dialog.contentTable.add(list).fillX().expandX().width(200f).row()
 		dialog.show(stage)
 	}
 }

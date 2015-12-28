@@ -124,7 +124,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 			is MapCell<*> -> {
 				when (cell.model) {
 					is Building -> {
-						createBuilding(cell as MapCell<Building<*>>)
+						createBuilding(cell as MapCell<Building>)
 					}
 					else -> throw RuntimeException("Unknown model type! (${cell.model})")
 				}
@@ -147,7 +147,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		baseLayer.objects.add(visualCharacter)
 	}
 
-	private fun createBuilding(cell: MapCell<Building<*>>) {
+	private fun createBuilding(cell: MapCell<Building>) {
 		val model = cell.model
 
 		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
@@ -184,7 +184,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		val visualCell = when (cell) {
 			is MapCell<*> -> {
 				when (cell.model) {
-					is Building<*> -> { buildingsLayer.objects.first() { (it as VisualMapObject<*>).baseCell == cell } as VisualMapObject<*>? }
+					is Building -> { buildingsLayer.objects.first() { (it as VisualMapObject<*>).baseCell == cell } as VisualMapObject<*>? }
 					else -> throw RuntimeException("Unknown model type! (${cell.model})")
 				}
 			}

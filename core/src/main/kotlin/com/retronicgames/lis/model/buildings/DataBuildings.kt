@@ -20,6 +20,7 @@
 package com.retronicgames.lis.model.buildings
 
 import com.retronicgames.lis.model.DataModel
+import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.utils.IntVector2
 
 interface DataBuildingModel : DataModel {
@@ -30,20 +31,14 @@ interface DataBuildingModel : DataModel {
 	val size: IntVector2
 }
 
-object DataBuildingLandingZone : DataBuildingModel {
-	override val passable = true
-	override val id = "landingZone"
-	override val size = IntVector2(3, 3)
-}
+enum class DataBuildings(
+		override val id: String,
+		override val passable: Boolean,
+		override val size: IntVector2
+) : DataBuildingModel {
+	LANDING_ZONE("landingZone", true, IntVector2(3, 3)),
+	LIVING_BLOCK("livingBlock", false, IntVector2(2, 2)),
+	DIG_SITE("digSite", false, IntVector2(3, 3));
 
-object DataBuildingLivingBlock : DataBuildingModel {
-	override val passable = false
-	override val id = "livingBlock"
-	override val size = IntVector2(2, 2)
-}
-
-object DataBuildingDigSite : DataBuildingModel {
-	override val passable = false
-	override val id = "digSite"
-	override val size = IntVector2(3, 3)
+	override fun toString() = LISGUI.i18n.get("name.$id")
 }

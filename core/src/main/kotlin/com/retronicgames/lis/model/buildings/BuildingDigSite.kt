@@ -1,5 +1,5 @@
 package com.retronicgames.lis.model.buildings
 
-class BuildingDigSite : AbstractBuilding<DataBuildingDigSite>(DataBuildingDigSite) {
+class BuildingDigSite : AbstractBuilding(DataBuildings.DIG_SITE) {
 
 }

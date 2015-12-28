@@ -19,5 +19,5 @@
  */
 package com.retronicgames.lis.model.buildings
 
-abstract class AbstractBuilding<DataModelType : DataBuildingModel>(override val data: DataModelType) : Building<DataModelType> {
+abstract class AbstractBuilding(override val data: DataBuildingModel) : Building {
 }

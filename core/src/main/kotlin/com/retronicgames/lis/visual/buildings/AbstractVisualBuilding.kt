@@ -26,7 +26,7 @@ import com.retronicgames.lis.visual.DataVisual
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.lis.visual.VisualMapObject
 
-abstract class AbstractVisualBuilding<ModelType : AbstractBuilding<*>, VisualModelType : DataVisual>(
+abstract class AbstractVisualBuilding<ModelType : AbstractBuilding, VisualModelType : DataVisual>(
 		cell: MapCell<ModelType>,
 		val visualDataModel: VisualModelType) : VisualMapObject<ModelType>(cell, Assets.sprite("buildings", cell.model.data.id)) {
 	init {

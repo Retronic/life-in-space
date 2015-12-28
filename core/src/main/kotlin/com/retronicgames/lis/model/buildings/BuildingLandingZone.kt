@@ -1,5 +1,5 @@
 package com.retronicgames.lis.model.buildings
 
-class BuildingLandingZone : AbstractBuilding<DataBuildingLandingZone>(DataBuildingLandingZone) {
+class BuildingLandingZone : AbstractBuilding(DataBuildings.LANDING_ZONE) {
 
 }

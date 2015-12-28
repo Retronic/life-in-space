@@ -4,10 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.scenes.scene2d.ui.Button
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.Window
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import com.retronicgames.lis.manager.Assets
@@ -17,9 +15,14 @@ object LISSkin : Skin() {
 	private val fontDefault = createFont("default", "fonts/PixelOperator/PixelOperator.ttf", 15)
 	private val fontDefaultBold = createFont("defaultBold", "fonts/PixelOperator/PixelOperator-Bold.ttf", 15)
 
+	val MAIN_PALETTE = intArrayOf(0xD9D5C3FF.toInt(), 0x999082FF.toInt(), 0x575B67FF, 0x3D3940FF)
+	val MAIN_PALETTE_COLORS = MAIN_PALETTE.map { Color(it) }.toTypedArray()
+
 	init {
 		addStyleLabel()
 		addStyleDialog()
+		addStyleList()
+		addStyleScrollPane()
 	}
 
 	private fun addStyleLabel() {
@@ -29,6 +32,16 @@ object LISSkin : Skin() {
 
 	private fun addStyleDialog() {
 		val style = Window.WindowStyle(fontDefault, Color.BLACK, drawable9("backDialog"))
+		add("default", style)
+	}
+
+	private fun addStyleList() {
+		val style = List.ListStyle(fontDefault, MAIN_PALETTE_COLORS[0], MAIN_PALETTE_COLORS[2], drawable("listSelection"))
+		add("default", style)
+	}
+
+	private fun addStyleScrollPane() {
+		val style = ScrollPane.ScrollPaneStyle()
 		add("default", style)
 	}
 
@@ -62,6 +75,7 @@ object LISSkin : Skin() {
 
 	@Suppress("NOTHING_TO_INLINE")
 	private inline fun drawable(id: String?) = if (id != null) SpriteDrawable(Assets.sprite("ui", id)) else null
+
 	@Suppress("NOTHING_TO_INLINE")
 	private inline fun drawable9(id: String?) = if (id != null) NinePatchDrawable(Assets.ninePatch("ui", id)) else null
 
@@ -69,5 +83,13 @@ object LISSkin : Skin() {
 		val result = Label(text, this)
 		result.setWrap(true)
 		return result
+	}
+
+	fun <T> scrollList(vararg items: T): ScrollPane {
+		val list = com.badlogic.gdx.scenes.scene2d.ui.List<T>(this)
+		list.setItems(*items)
+
+		val scroll = ScrollPane(list, this)
+		return scroll
 	}
 }

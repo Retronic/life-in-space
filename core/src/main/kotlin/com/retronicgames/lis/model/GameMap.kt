@@ -106,7 +106,7 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 	 */
 	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
 
-	fun createBuilding(x: Int, y: Int, model: Building<out DataBuildingModel>) = addTopCell(x, y, model)
+	fun createBuilding(x: Int, y: Int, model: Building) = addTopCell(x, y, model)
 
 	private fun <ModelType : Model<out DataBuildingModel>> addTopCell(x: Int, y: Int, model: ModelType): Boolean {
 		val cell = cellAt(x, y) ?: return false

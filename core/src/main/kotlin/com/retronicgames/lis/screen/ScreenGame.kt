@@ -27,6 +27,7 @@ import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.mission.Mission
+import com.retronicgames.lis.model.buildings.DataBuildings
 import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.utils.IntVector2
@@ -93,7 +94,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 	private fun performAction(screenX: Int, screenY: Int) {
 		val coords = visualMap.screen2cellCoords(screenX, screenY)
 		visualMap.markCell(coords, Color.SALMON)
-		gui.showModal("dialog.build.text")
+		gui.showList("dialog.build.title", *DataBuildings.values())
 	}
 
 	override fun resize(width: Int, height: Int) {
