@@ -41,3 +41,9 @@ object DataBuildingLivingBlock : DataBuildingModel {
 	override val id = "livingBlock"
 	override val size = IntVector2(2, 2)
 }
+
+object DataBuildingDigSite : DataBuildingModel {
+	override val passable = false
+	override val id = "digSite"
+	override val size = IntVector2(3, 3)
+}

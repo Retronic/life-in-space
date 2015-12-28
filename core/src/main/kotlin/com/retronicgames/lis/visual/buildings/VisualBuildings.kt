@@ -20,6 +20,7 @@
 package com.retronicgames.lis.visual.buildings
 
 import com.retronicgames.lis.model.MapCell
+import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 
@@ -30,5 +31,10 @@ class VisualBuildingLandingZone(cell: MapCell<BuildingLandingZone>) :
 
 class VisualBuildingLivingBlock(cell: MapCell<BuildingLivingBlock>) :
 		AbstractVisualBuilding<BuildingLivingBlock, DataVisualBuildingLivingBlock>(cell, DataVisualBuildingLivingBlock) {
+
+}
+
+class VisualBuildingDigSite(cell: MapCell<BuildingDigSite>) :
+		AbstractVisualBuilding<BuildingDigSite, DataVisualBuildingDigSite>(cell, DataVisualBuildingDigSite) {
 
 }

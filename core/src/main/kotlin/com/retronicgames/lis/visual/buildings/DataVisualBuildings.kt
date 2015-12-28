@@ -10,3 +10,7 @@ object DataVisualBuildingLandingZone : DataVisual {
 object DataVisualBuildingLivingBlock : DataVisual {
 	override val offset = IntVector2.ZERO
 }
+
+object DataVisualBuildingDigSite: DataVisual {
+	override val offset = IntVector2.ZERO
+}

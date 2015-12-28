@@ -33,10 +33,12 @@ import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.MapCell
 import com.retronicgames.lis.model.buildings.Building
+import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.lis.model.characters.GameCharacter
+import com.retronicgames.lis.visual.buildings.VisualBuildingDigSite
 import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
 import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
 import com.retronicgames.lis.visual.characters.VisualCharacterSettler
@@ -152,6 +154,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		buildingsLayer.add(when(cell.model) {
 			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>)
 			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>)
+			is BuildingDigSite -> VisualBuildingDigSite(cell as MapCell<BuildingDigSite>)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}
