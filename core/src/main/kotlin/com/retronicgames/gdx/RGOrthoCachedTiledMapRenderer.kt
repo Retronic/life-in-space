@@ -250,7 +250,10 @@ class RGOrthoCachedTiledMapRenderer(protected val map: TiledMap, protected var u
 	}
 
 	override fun renderObject(obj: MapObject) {
-		(obj as VisualMapCharacter).sprite.draw(objectBatch)
+		val visualObj = obj as VisualMapCharacter
+		if (visualObj.isVisible) {
+			visualObj.sprite.draw(objectBatch)
+		}
 	}
 
 	override fun renderTileLayer(layer: TiledMapTileLayer) {

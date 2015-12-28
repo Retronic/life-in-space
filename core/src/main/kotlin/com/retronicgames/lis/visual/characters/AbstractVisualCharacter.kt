@@ -23,9 +23,10 @@ import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.DataVisual
 import com.retronicgames.lis.visual.VisualMapCharacter
+import com.retronicgames.utils.RGSpriteWrapper
 
 abstract class AbstractVisualCharacter<CharacterType : GameCharacter<*, *>, VisualModelType : DataVisual>(character: CharacterType, val visualDataModel: VisualModelType) :
-		VisualMapCharacter(Assets.sprite("characters", "${character.data.id}_${character.state.value.name.toLowerCase()}", 0)) {
+		VisualMapCharacter(RGSpriteWrapper(Assets.sprite("characters", "${character.data.id}_${character.state.value.name.toLowerCase()}", 0))) {
 	init {
 		val position = character.position
 		val offset = visualDataModel.offset

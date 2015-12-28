@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.retronicgames.utils.NinePatchSprite
 
 object Assets {
 	private val manager = AssetManager()
@@ -32,5 +33,11 @@ object Assets {
 		val textureAtlas = textureAtlas(atlas)
 		// FIXME: Cache!
 		return textureAtlas!!.createPatch(id)
+	}
+
+	fun ninePatchSprite(atlas: String, id: String): NinePatchSprite {
+		val ninePatch = ninePatch(atlas, id)
+
+		return NinePatchSprite(ninePatch)
 	}
 }

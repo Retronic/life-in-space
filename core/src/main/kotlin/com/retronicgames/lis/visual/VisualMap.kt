@@ -19,7 +19,6 @@
  */
 package com.retronicgames.lis.visual
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
@@ -73,6 +72,9 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 	private val tileset = TiledMapTileSet()
 	private val baseLayer = TiledMapTileLayer(map.width, map.height, TILE_W, TILE_H)
 	private val buildingsLayer = RGObjectsOnlyMapLayer()
+	private val effectsLayer = TiledMapTileLayer(0, 0, 0, 0)
+
+	private var cellSelection = CellSelection()
 
 	init {
 		val textureAtlas = Assets.textureAtlas("terrain") ?: throw RuntimeException("Cannot load terrain!")
@@ -94,9 +96,12 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 			idx++
 		}
 
+		effectsLayer.objects.add(cellSelection)
+
 		visualMap.tileSets.addTileSet(tileset)
 		visualMap.layers.add(baseLayer)
 		visualMap.layers.add(buildingsLayer)
+		visualMap.layers.add(effectsLayer)
 
 		rebuild()
 
@@ -176,32 +181,16 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 
 	/// Cell marking ///
 
-	private var lastMarkedCell: Tintable? = null
-
-	fun markCell(coords: IntVector2, color: Color): Boolean {
+	fun markCell(coords: IntVector2): Boolean {
 		val cell = map.cellAt(coords) ?: return false
-		lastMarkedCell?.tint = null
-		val visualCell = when (cell) {
-			is MapCell<*> -> {
-				when (cell.model) {
-					is Building -> { buildingsLayer.objects.first() { (it as VisualMapObject<*>).baseCell == cell } as VisualMapObject<*>? }
-					else -> throw RuntimeException("Unknown model type! (${cell.model})")
-				}
-			}
-			is BaseMapCell -> { cellAt(coords) }
-			else -> throw RuntimeException("Unknown cell type! ($cell)")
-		} ?: return false
 
-		visualCell.tint = color
-		lastMarkedCell = visualCell
-
-		renderer.invalidateCache()
+		cellSelection.isVisible = true
+		cellSelection.selectCell(cell)
 
 		return true
 	}
 
-	fun unmarkAllCells() {
-		lastMarkedCell?.tint = null
-		lastMarkedCell = null
+	fun unmarkCells() {
+		cellSelection.isVisible = false
 	}
 }

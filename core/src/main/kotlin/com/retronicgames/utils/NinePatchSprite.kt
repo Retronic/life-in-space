@@ -17,12 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.visual
+package com.retronicgames.utils
 
-import com.badlogic.gdx.maps.MapObject
-import com.retronicgames.utils.RGSprite
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.NinePatch
 
-// FIXME: this should be VisualMapObject, but that one should be a bit more generic
-open class VisualMapCharacter(val sprite: RGSprite) : MapObject() {
-
+class NinePatchSprite(private val ninePatch: NinePatch) : AbstractRGSprite() {
+	override fun draw(batch: Batch) {
+		ninePatch.draw(batch, position.x, position.y, size.x, size.y)
+	}
 }
