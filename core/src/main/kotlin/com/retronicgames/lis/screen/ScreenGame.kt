@@ -26,6 +26,7 @@ import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.mission.Mission
+import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.buildings.DataBuildings
 import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.lis.visual.VisualMap
@@ -92,8 +93,18 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	private fun performAction(screenX: Int, screenY: Int) {
 		val coords = visualMap.screen2cellCoords(screenX, screenY)
+		val cell = mission.map.cellAt(coords) ?: return
+
+		if (cell.javaClass == BaseMapCell::class.java) {
+			actBuild(cell, coords)
+		} else {
+			// TODO
+		}
+	}
+
+	private fun actBuild(cell: BaseMapCell, coords: IntVector2) {
 		visualMap.markCell(coords)
-		gui.showList("dialog.build.title", *DataBuildings.values()) { success ->
+		gui.showList("dialog.build.title", *DataBuildings.values().filter { it.size.x == cell.w && it.size.y == cell.h }.toTypedArray()) { success ->
 			visualMap.unmarkCells()
 		}
 	}
