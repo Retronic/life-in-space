@@ -20,9 +20,23 @@
 package com.retronicgames.lis.mission.tasks
 
 class TaskManager {
-	private val tasks = com.badlogic.gdx.utils.Array<Task>()
+	private val tasks = com.badlogic.gdx.utils.Array<Task>(16)
+	private val taskToRemove = com.badlogic.gdx.utils.Array<Task>(false, 16)
 
 	fun add(task: Task) {
 		tasks.add(task)
+	}
+
+	fun update(delta: Float) {
+		tasks.forEach {
+			it.update(delta)
+			if (it.finished) {
+				taskToRemove.add(it)
+			}
+		}
+		if (taskToRemove.size > 0) {
+			taskToRemove.forEach { tasks.removeValue(it, true) }
+			taskToRemove.clear()
+		}
 	}
 }

@@ -61,9 +61,10 @@ class PathFinding(private val map: GameMap) {
 			val y2 = cell.y + cell.h
 
 			for (y in y1..y2) {
-				val row = passableNodes[y]
+				val row = passableNodes.getOrNull(y) ?: continue
 				for (x in x1..x2) {
-					row[x].rebuild(map, passableNodes)
+					val c = row.getOrNull(x) ?: continue
+					c.rebuild(map, passableNodes)
 				}
 			}
 		}

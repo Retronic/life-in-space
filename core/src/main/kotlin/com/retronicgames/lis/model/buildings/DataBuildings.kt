@@ -29,18 +29,24 @@ interface DataBuildingModel : DataModel {
 	 */
 	val passable: Boolean
 	val size: IntVector2
+
+	/**
+	 * In seconds
+	 */
+	val buildTime: Float
 }
 
 enum class DataBuildings(
 		override val id: String,
 		override val passable: Boolean,
-		override val size: IntVector2, buildingMaker: () -> Building
+		override val size: IntVector2, override val buildTime: Float,
+		val buildingMaker: () -> Building
 ) : DataBuildingModel {
-	LANDING_ZONE("landingZone", true, IntVector2(3, 3), ::BuildingLandingZone),
-	LIVING_BLOCK("livingBlock", false, IntVector2(2, 2), ::BuildingLivingBlock),
-	DIG_SITE("digSite", false, IntVector2(3, 3), ::BuildingDigSite),
-	POWER_BLOCK("powerBlock", false, IntVector2(1, 1), ::BuildingPowerBlock),
-	SOLAR_PANELS("solarPanels", false, IntVector2(3, 3), ::BuildingSolarPanels);
+	LANDING_ZONE("landingZone", true, IntVector2(3, 3), 3f, ::BuildingLandingZone),
+	LIVING_BLOCK("livingBlock", false, IntVector2(2, 2), 3f, ::BuildingLivingBlock),
+	DIG_SITE("digSite", false, IntVector2(3, 3), 3f, ::BuildingDigSite),
+	POWER_BLOCK("powerBlock", false, IntVector2(1, 1), 3f, ::BuildingPowerBlock),
+	SOLAR_PANELS("solarPanels", false, IntVector2(3, 3), 3f, ::BuildingSolarPanels);
 
 	override fun toString() = LISGUI.i18n.get("name.$id")
 }

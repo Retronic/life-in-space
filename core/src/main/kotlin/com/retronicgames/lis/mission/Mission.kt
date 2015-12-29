@@ -41,5 +41,7 @@ abstract class Mission {
 	fun update(delta: Float) {
 		map.update(delta)
 		characterMap.update(delta)
+
+		taskManager.update(delta)
 	}
 }

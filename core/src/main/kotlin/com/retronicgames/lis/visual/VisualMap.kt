@@ -122,6 +122,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		map.forEachCell(false) { x, y, row, cell ->
 			rebuildCell(x, y, cell)
 		}
+		map.addOnCellListener { x, y, cell -> rebuildCell(x, y, cell); renderer.invalidateCache() }
 		characterMap.forEach {
 			rebuildCharacter(it)
 		}

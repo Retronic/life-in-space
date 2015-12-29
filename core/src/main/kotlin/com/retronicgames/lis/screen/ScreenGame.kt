@@ -109,7 +109,13 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 			visualMap.unmarkCells()
 			if (result == null) return@showList
 
-			mission.taskManager.add(TaskBuild(result))
+			mission.taskManager.add(createTaskBuild(cell.x, cell.y, result))
+		}
+	}
+
+	private fun createTaskBuild(x: Int, y: Int, data: DataBuildings): TaskBuild {
+		return TaskBuild(data) { building ->
+			mission.map.createBuilding(x, y, building)
 		}
 	}
 

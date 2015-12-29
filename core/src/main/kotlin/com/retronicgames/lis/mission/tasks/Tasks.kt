@@ -19,6 +19,7 @@
  */
 package com.retronicgames.lis.mission.tasks
 
+import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.DataBuildings
 
 interface Task {
@@ -26,8 +27,29 @@ interface Task {
 	 * Name on the properties file will be "task.$nameI18N.name"
 	 */
 	val nameI18N: String
+
+	var finished: Boolean
+
+	fun update(delta: Float)
 }
 
-class TaskBuild(val data: DataBuildings) : Task {
+class TaskBuild(val data: DataBuildings, private val callback: (building: Building) -> Unit) : Task {
+	override var finished = false
+
 	override val nameI18N = "build"
+
+	private var buildTime = data.buildTime
+
+	override fun update(delta: Float) {
+		buildTime -= delta
+
+		if (buildTime <= 0) {
+			finishedBuilding()
+		}
+	}
+
+	private fun finishedBuilding() {
+		callback(data.buildingMaker())
+		finished = true
+	}
 }
