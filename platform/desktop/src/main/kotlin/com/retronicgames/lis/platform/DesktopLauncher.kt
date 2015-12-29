@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import com.retronicgames.api.gdx.PlatformSupport
 import com.retronicgames.lis.LISGame
+import com.retronicgames.lis.visual.VisualMap
 
 object DesktopLauncher {
 	@JvmStatic fun main(arg: Array<String>) {
@@ -15,8 +16,8 @@ object DesktopLauncher {
 
 		config.title = title
 
-		config.width = 1280
-		config.height= 1024
+		config.width = 12 * VisualMap.TILE_W
+		config.height= 20 * VisualMap.TILE_H
 
 		LwjglApplication(LISGame(object : PlatformSupport(version, title) {}), config)
 	}
