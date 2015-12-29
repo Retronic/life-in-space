@@ -109,7 +109,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
 
 	fun createBuilding(x: Int, y: Int, model: Building) = addTopCell(x, y, model.data.size, { size, baseCell ->
-		MapCell(model, baseCell.x, baseCell.y, size.x, size.y, baseCell)
+		ModelMapCell(model, baseCell.x, baseCell.y, size.x, size.y, baseCell)
 	})
 
 	private fun addTopCell(x: Int, y: Int, size: IntVector2, cellCreator: (size: IntVector2, baseCell: BaseMapCell) -> BaseMapCell): Boolean {
@@ -180,5 +180,5 @@ open class BaseMapCell(val x: Int, val y: Int, val w: Int = 1, val h: Int = 1) {
 	override fun toString() = "($x, $y) [${w}x$h]"
 }
 
-class MapCell<ModelType : Model<out DataModel>>(val model: ModelType, x: Int, y: Int, w: Int = 1, h: Int = 1, val belowCell: BaseMapCell) : BaseMapCell(x, y, w, h) {
+class ModelMapCell<ModelType : Model<out DataModel>>(val model: ModelType, x: Int, y: Int, w: Int = 1, h: Int = 1, val belowCell: BaseMapCell) : BaseMapCell(x, y, w, h) {
 }

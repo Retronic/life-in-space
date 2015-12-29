@@ -26,7 +26,7 @@ import com.badlogic.gdx.ai.pfa.indexed.IndexedNode
 import com.badlogic.gdx.utils.Pool
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameMap
-import com.retronicgames.lis.model.MapCell
+import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
@@ -140,7 +140,7 @@ private class PathFindingCell(val x: Int, val y: Int) : IndexedNode<PathFindingC
 	                          x: Int, y: Int) {
 		val cell = map.cellAt(x, y) ?: return
 		val passable = when {
-			cell is MapCell<*> && cell.model is Building && cell.model.data.passable -> true
+			cell is ModelMapCell<*> && cell.model is Building && cell.model.data.passable -> true
 			cell.javaClass == BaseMapCell::class.java -> true
 			else -> false
 		}

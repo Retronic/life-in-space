@@ -19,34 +19,34 @@
  */
 package com.retronicgames.lis.visual.buildings
 
-import com.retronicgames.lis.model.MapCell
+import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.buildings.BuildingPowerBlock
 import com.retronicgames.lis.model.buildings.BuildingSolarPanels
 
-class VisualBuildingLandingZone(cell: MapCell<BuildingLandingZone>) :
+class VisualBuildingLandingZone(cell: ModelMapCell<BuildingLandingZone>) :
 		AbstractVisualBuilding<BuildingLandingZone, DataVisualBuildingLandingZone>(cell, DataVisualBuildingLandingZone) {
 
 }
 
-class VisualBuildingLivingBlock(cell: MapCell<BuildingLivingBlock>) :
+class VisualBuildingLivingBlock(cell: ModelMapCell<BuildingLivingBlock>) :
 		AbstractVisualBuilding<BuildingLivingBlock, DataVisualBuildingLivingBlock>(cell, DataVisualBuildingLivingBlock) {
 
 }
 
-class VisualBuildingDigSite(cell: MapCell<BuildingDigSite>) :
+class VisualBuildingDigSite(cell: ModelMapCell<BuildingDigSite>) :
 		AbstractVisualBuilding<BuildingDigSite, DataVisualBuildingDigSite>(cell, DataVisualBuildingDigSite) {
 
 }
 
-class VisualBuildingPowerBlock(cell: MapCell<BuildingPowerBlock>) :
+class VisualBuildingPowerBlock(cell: ModelMapCell<BuildingPowerBlock>) :
 		AbstractVisualBuilding<BuildingPowerBlock, DataVisualBuildingPowerBlock>(cell, DataVisualBuildingPowerBlock) {
 
 }
 
-class VisualBuildingSolarPanels(cell: MapCell<BuildingSolarPanels>) :
+class VisualBuildingSolarPanels(cell: ModelMapCell<BuildingSolarPanels>) :
 		AbstractVisualBuilding<BuildingSolarPanels, DataVisualBuildingSolarPanels>(cell, DataVisualBuildingSolarPanels) {
 
 }

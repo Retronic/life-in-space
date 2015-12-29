@@ -30,7 +30,7 @@ import com.retronicgames.lis.manager.Assets
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
-import com.retronicgames.lis.model.MapCell
+import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
@@ -131,10 +131,10 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 
 	private inline fun rebuildCell(x: Int, y: Int, cell: BaseMapCell) {
 		when (cell) {
-			is MapCell<*> -> {
+			is ModelMapCell<*> -> {
 				when (cell.model) {
 					is Building -> {
-						createBuilding(cell as MapCell<Building>)
+						createBuilding(cell as ModelMapCell<Building>)
 					}
 					else -> throw RuntimeException("Unknown model type! (${cell.model})")
 				}
@@ -157,16 +157,16 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		baseLayer.objects.add(visualCharacter)
 	}
 
-	private fun createBuilding(cell: MapCell<Building>) {
+	private fun createBuilding(cell: ModelMapCell<Building>) {
 		val model = cell.model
 
 		// FIXME: We should not be switching here, but calling something that knows about the types (or make the model know about its visuals, but that's not nice...)
 		buildingsLayer.add(when(cell.model) {
-			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>)
-			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>)
-			is BuildingDigSite -> VisualBuildingDigSite(cell as MapCell<BuildingDigSite>)
-			is BuildingPowerBlock -> VisualBuildingPowerBlock(cell as MapCell<BuildingPowerBlock>)
-			is BuildingSolarPanels -> VisualBuildingSolarPanels(cell as MapCell<BuildingSolarPanels>)
+			is BuildingLandingZone -> VisualBuildingLandingZone(cell as ModelMapCell<BuildingLandingZone>)
+			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as ModelMapCell<BuildingLivingBlock>)
+			is BuildingDigSite -> VisualBuildingDigSite(cell as ModelMapCell<BuildingDigSite>)
+			is BuildingPowerBlock -> VisualBuildingPowerBlock(cell as ModelMapCell<BuildingPowerBlock>)
+			is BuildingSolarPanels -> VisualBuildingSolarPanels(cell as ModelMapCell<BuildingSolarPanels>)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}

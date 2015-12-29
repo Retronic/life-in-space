@@ -20,14 +20,14 @@
 package com.retronicgames.lis.visual.buildings
 
 import com.retronicgames.lis.manager.Assets
-import com.retronicgames.lis.model.MapCell
+import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.AbstractBuilding
 import com.retronicgames.lis.visual.DataVisual
 import com.retronicgames.lis.visual.VisualMap
 import com.retronicgames.lis.visual.VisualMapObject
 
 abstract class AbstractVisualBuilding<ModelType : AbstractBuilding, VisualModelType : DataVisual>(
-		cell: MapCell<ModelType>,
+		cell: ModelMapCell<ModelType>,
 		val visualDataModel: VisualModelType) : VisualMapObject<ModelType>(cell, Assets.sprite("buildings", cell.model.data.id)) {
 	init {
 		val offset = visualDataModel.offset
