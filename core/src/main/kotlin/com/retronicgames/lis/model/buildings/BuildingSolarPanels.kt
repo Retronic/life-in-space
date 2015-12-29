@@ -19,6 +19,6 @@
  */
 package com.retronicgames.lis.model.buildings
 
-class BuildingDigSite : AbstractBuilding(DataBuildings.DIG_SITE) {
+class BuildingSolarPanels : AbstractBuilding(DataBuildings.SOLAR_PANELS) {
 
 }

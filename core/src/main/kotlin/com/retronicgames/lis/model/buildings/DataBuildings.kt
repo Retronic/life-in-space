@@ -38,7 +38,9 @@ enum class DataBuildings(
 ) : DataBuildingModel {
 	LANDING_ZONE("landingZone", true, IntVector2(3, 3)),
 	LIVING_BLOCK("livingBlock", false, IntVector2(2, 2)),
-	DIG_SITE("digSite", false, IntVector2(3, 3));
+	DIG_SITE("digSite", false, IntVector2(3, 3)),
+	POWER_BLOCK("powerBlock", false, IntVector2(1, 1)),
+	SOLAR_PANELS("solarPanels", false, IntVector2(3, 3));
 
 	override fun toString() = LISGUI.i18n.get("name.$id")
 }

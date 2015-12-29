@@ -23,6 +23,8 @@ import com.retronicgames.lis.model.MapCell
 import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
+import com.retronicgames.lis.model.buildings.BuildingPowerBlock
+import com.retronicgames.lis.model.buildings.BuildingSolarPanels
 
 class VisualBuildingLandingZone(cell: MapCell<BuildingLandingZone>) :
 		AbstractVisualBuilding<BuildingLandingZone, DataVisualBuildingLandingZone>(cell, DataVisualBuildingLandingZone) {
@@ -36,5 +38,15 @@ class VisualBuildingLivingBlock(cell: MapCell<BuildingLivingBlock>) :
 
 class VisualBuildingDigSite(cell: MapCell<BuildingDigSite>) :
 		AbstractVisualBuilding<BuildingDigSite, DataVisualBuildingDigSite>(cell, DataVisualBuildingDigSite) {
+
+}
+
+class VisualBuildingPowerBlock(cell: MapCell<BuildingPowerBlock>) :
+		AbstractVisualBuilding<BuildingPowerBlock, DataVisualBuildingPowerBlock>(cell, DataVisualBuildingPowerBlock) {
+
+}
+
+class VisualBuildingSolarPanels(cell: MapCell<BuildingSolarPanels>) :
+		AbstractVisualBuilding<BuildingSolarPanels, DataVisualBuildingSolarPanels>(cell, DataVisualBuildingSolarPanels) {
 
 }

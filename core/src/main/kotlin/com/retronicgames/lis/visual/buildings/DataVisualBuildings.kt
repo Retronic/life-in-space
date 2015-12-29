@@ -14,3 +14,11 @@ object DataVisualBuildingLivingBlock : DataVisual {
 object DataVisualBuildingDigSite: DataVisual {
 	override val offset = IntVector2.ZERO
 }
+
+object DataVisualBuildingPowerBlock: DataVisual {
+	override val offset = IntVector2.ZERO
+}
+
+object DataVisualBuildingSolarPanels: DataVisual {
+	override val offset = IntVector2.ZERO
+}

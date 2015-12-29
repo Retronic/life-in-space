@@ -35,11 +35,15 @@ import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.BuildingDigSite
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
+import com.retronicgames.lis.model.buildings.BuildingPowerBlock
+import com.retronicgames.lis.model.buildings.BuildingSolarPanels
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.buildings.VisualBuildingDigSite
 import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
 import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
+import com.retronicgames.lis.visual.buildings.VisualBuildingPowerBlock
+import com.retronicgames.lis.visual.buildings.VisualBuildingSolarPanels
 import com.retronicgames.lis.visual.characters.VisualCharacterSettler
 import com.retronicgames.utils.CameraListener
 import com.retronicgames.utils.IntVector2
@@ -144,7 +148,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 	}
 
 	private inline fun rebuildCharacter(character: GameCharacter<*, *>) {
-		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
+		// FIXME: We should not be switching here, but calling something that knows about the types (or make the model know about its visuals, but that's not nice...)
 		val visualCharacter = when (character) {
 			is CharacterSettler -> VisualCharacterSettler(character)
 			else -> throw RuntimeException("Unknown character type! ($character)")
@@ -155,11 +159,13 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 	private fun createBuilding(cell: MapCell<Building>) {
 		val model = cell.model
 
-		// FIXME: We should not be switching here, but caliing something that knows about the types (or make the model know about its visuals, but that's not nice...)
+		// FIXME: We should not be switching here, but calling something that knows about the types (or make the model know about its visuals, but that's not nice...)
 		buildingsLayer.add(when(cell.model) {
 			is BuildingLandingZone -> VisualBuildingLandingZone(cell as MapCell<BuildingLandingZone>)
 			is BuildingLivingBlock -> VisualBuildingLivingBlock(cell as MapCell<BuildingLivingBlock>)
 			is BuildingDigSite -> VisualBuildingDigSite(cell as MapCell<BuildingDigSite>)
+			is BuildingPowerBlock -> VisualBuildingPowerBlock(cell as MapCell<BuildingPowerBlock>)
+			is BuildingSolarPanels -> VisualBuildingSolarPanels(cell as MapCell<BuildingSolarPanels>)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}
