@@ -22,7 +22,6 @@ package com.retronicgames.lis.model
 import com.badlogic.gdx.math.RandomXS128
 import com.retronicgames.gdx.from
 import com.retronicgames.lis.model.buildings.Building
-import com.retronicgames.lis.model.buildings.DataBuildingModel
 import com.retronicgames.lis.model.map.PathFinding
 import com.retronicgames.utils.IntVector2
 
@@ -109,15 +108,16 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	 */
 	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
 
-	fun createBuilding(x: Int, y: Int, model: Building) = addTopCell(x, y, model)
+	fun createBuilding(x: Int, y: Int, model: Building) = addTopCell(x, y, model.data.size, { size, baseCell ->
+		MapCell(model, baseCell.x, baseCell.y, size.x, size.y, baseCell)
+	})
 
-	private fun <ModelType : Model<out DataBuildingModel>> addTopCell(x: Int, y: Int, model: ModelType): Boolean {
+	private fun addTopCell(x: Int, y: Int, size: IntVector2, cellCreator: (size: IntVector2, baseCell: BaseMapCell) -> BaseMapCell): Boolean {
 		val cell = cellAt(x, y) ?: return false
 
-		val size = model.data.size
 		if (cell.w != size.x || cell.h != size.y) return false
 
-		val newCell = MapCell(model, x, y, size.x, size.y, cell)
+		val newCell = cellCreator(size, cell)
 
 		forEachInRange(true, newCell) { x, y, row, cell ->
 			row[x] = newCell
