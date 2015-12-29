@@ -44,6 +44,7 @@ object LISSkin : Skin() {
 		add("default", style)
 
 		val styleText = TextButton.TextButtonStyle(drawable9("buttonUp"), drawable9("buttonDown"), null, fontDefaultBold)
+		styleText.fontColor = MAIN_PALETTE_COLORS[3]
 		styleText.over = drawable9("buttonOver")
 		add("default", styleText)
 	}
