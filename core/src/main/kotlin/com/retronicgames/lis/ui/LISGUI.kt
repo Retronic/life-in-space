@@ -3,10 +3,11 @@ package com.retronicgames.lis.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.I18NBundle
+import com.retronicgames.lis.mission.Mission
 import com.retronicgames.lis.ui.LISSkin.textButton9
 import com.retronicgames.utils.RGGUI
 
-class LISGUI : RGGUI() {
+class LISGUI(private val mission: Mission) : RGGUI() {
 	companion object {
 		val i18n = I18NBundle.createBundle(Gdx.files.internal("i18n/main"))
 	}
@@ -32,13 +33,15 @@ class LISGUI : RGGUI() {
 	private fun addResourcesPanel() {
 		val pnlResources = LISSkin.panel("panel2")
 		pnlResources.pad(5f)
-		pnlResources.columnDefaults(0).padRight(2f)
-		pnlResources.add("38")
-		pnlResources.add(LISSkin.image("ui", "icon_resource_power")).row()
-		pnlResources.add("42")
-		pnlResources.add(LISSkin.image("ui", "icon_resource_research")).row()
-		pnlResources.add("55")
-		pnlResources.add(LISSkin.image("ui", "icon_resource_bricks")).row()
+		pnlResources.columnDefaults(0).padRight(5f)
+
+		for (resourceEntry in mission.resourceManager) {
+			val lbl = Label(resourceEntry.value.value.toString(), LISSkin)
+			resourceEntry.value.onChange { lbl.setText(resourceEntry.value.value.toString()) }
+			pnlResources.add(lbl).right()
+
+			pnlResources.add(LISSkin.image("ui", "icon_resource_${resourceEntry.key.id}")).row()
+		}
 
 		root.add()
 		root.add(pnlResources).top().right().expand()

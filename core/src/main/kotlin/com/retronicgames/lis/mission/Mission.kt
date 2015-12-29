@@ -19,6 +19,9 @@
  */
 package com.retronicgames.lis.mission
 
+import com.retronicgames.lis.mission.resources.ResourceManager
+import com.retronicgames.lis.mission.resources.ResourceType
+import com.retronicgames.lis.mission.tasks.TaskManager
 import com.retronicgames.lis.model.GameCharacterMap
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.utils.IntVector2
@@ -27,7 +30,13 @@ abstract class Mission {
 	abstract val map: GameMap
 	abstract val initialCameraCenter: IntVector2
 
+	// FIXME: This should be a field instead of a function, but fields wont be initialized until we (the parent) are
+	abstract fun initialResources(): Map<ResourceType, Int>
+
 	val characterMap = GameCharacterMap()
+
+	val taskManager = TaskManager()
+	val resourceManager = ResourceManager(this)
 
 	fun update(delta: Float) {
 		map.update(delta)

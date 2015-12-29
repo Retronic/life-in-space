@@ -26,6 +26,7 @@ import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.ai.GdxAI
 import com.badlogic.gdx.graphics.GL20
 import com.retronicgames.lis.mission.Mission
+import com.retronicgames.lis.mission.tasks.TaskBuild
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.buildings.DataBuildings
 import com.retronicgames.lis.ui.LISGUI
@@ -42,7 +43,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 	private val visualMap = VisualMap(mission.map, mission.characterMap)
 	private val cam = RGCamera(mission.map.width * VisualMap.TILE_W, mission.map.height * VisualMap.TILE_H)
 
-	private val gui = LISGUI()
+	private val gui = LISGUI(mission)
 
 	private val inputProcessor = object : InputAdapter() {
 		private var startTouch = MutableIntVector2(-1, -1)
@@ -104,8 +105,11 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	private fun actBuild(cell: BaseMapCell, coords: IntVector2) {
 		visualMap.markCell(coords)
-		gui.showList("dialog.build.title", *DataBuildings.values().filter { it.size.x == cell.w && it.size.y == cell.h }.toTypedArray()) { success ->
+		gui.showList("dialog.build.title", *DataBuildings.values().filter { it.size.x == cell.w && it.size.y == cell.h }.toTypedArray()) { result ->
 			visualMap.unmarkCells()
+			if (result == null) return@showList
+
+			mission.taskManager.add(TaskBuild(result))
 		}
 	}
 

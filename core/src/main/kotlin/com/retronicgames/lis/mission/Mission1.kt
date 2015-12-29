@@ -20,6 +20,7 @@
 package com.retronicgames.lis.mission
 
 import com.retronicgames.lis.LISGame
+import com.retronicgames.lis.mission.resources.ResourceType
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
@@ -38,6 +39,8 @@ class Mission1(private val game: LISGame) : Mission() {
 
 	override val map: GameMap;
 	override val initialCameraCenter: IntVector2
+
+	override fun initialResources() = hashMapOf(ResourceType.BRICKS to 1000)
 
 	init {
 		var initialCell:BaseMapCell? = null
