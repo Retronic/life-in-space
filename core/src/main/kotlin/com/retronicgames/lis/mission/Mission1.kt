@@ -45,7 +45,7 @@ class Mission1(private val game: LISGame) : Mission() {
 	init {
 		var initialCell:BaseMapCell? = null
 
-		map = GameMap(MAP_W, MAP_H) {
+		map = GameMap(1234567890123456L, MAP_W, MAP_H) {
 			makeHoles(MAX_HOLES_3x3, 3, 3)
 			makeHoles(MAX_HOLES_2x2, 2, 2)
 

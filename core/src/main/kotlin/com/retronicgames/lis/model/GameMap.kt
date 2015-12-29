@@ -19,15 +19,18 @@
  */
 package com.retronicgames.lis.model
 
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.RandomXS128
+import com.retronicgames.gdx.from
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.DataBuildingModel
 import com.retronicgames.lis.model.map.PathFinding
 import com.retronicgames.utils.IntVector2
 
-class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) {
+class GameMap(val seed: Long, val width: Int, val height: Int, initializer: GameMap.() -> Unit) {
+	private val random = RandomXS128(seed)
+
 	private val gameMap = Array(height) { y -> Array(width) { x -> BaseMapCell(x, y) } }
-	private val randomMap = Array(height) { Array(width) { Math.abs(MathUtils.random.nextInt()) } }
+	private val randomMap = Array(height) { Array(width) { Math.abs(random.nextInt()) } }
 
 	@Transient
 	private val tempCellArray = com.badlogic.gdx.utils.Array<BaseMapCell>(16)
@@ -53,9 +56,9 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 	 */
 	fun makeHoles(maxCount: Int, holeW: Int, holeH: Int) {
 		for (j in 0..maxCount - 1) {
-			val x = MathUtils.random(width - 1)
+			val x = random.nextInt(width)
 			if (x > width - holeW) continue
-			val y = MathUtils.random(height - 1)
+			val y = random.nextInt(height)
 			if (y > height - holeH) continue
 
 			var valid = true
@@ -144,7 +147,7 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 			}
 		}
 
-		return tempCellArray.random()
+		return random.from(tempCellArray)
 	}
 
 	fun randomEmptyCellSurrounding(surroundedCell: BaseMapCell, targetW: Int, targetH: Int): BaseMapCell? {
@@ -165,7 +168,7 @@ class GameMap(val width: Int, val height: Int, initializer: GameMap.() -> Unit) 
 		forEachInRange(true, x - 1, y - 1, 1, h + 2, callback)
 		forEachInRange(true, x + w, y - 1, 1, h + 2, callback)
 
-		return tempCellArray.random()
+		return random.from(tempCellArray)
 	}
 
 	fun addOnCellListener(listener: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {

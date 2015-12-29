@@ -19,6 +19,7 @@
  */
 package com.retronicgames.gdx
 
+import com.badlogic.gdx.math.RandomXS128
 import com.badlogic.gdx.utils.IdentityMap
 import com.badlogic.gdx.utils.IntMap
 import com.badlogic.gdx.utils.ObjectMap
@@ -37,3 +38,6 @@ operator inline fun <K, V> ObjectMap<K, V>.set(key: K, value: V) {
 operator inline fun <V> IntMap<V>.set(key: Int, value: V) {
 	put(key, value)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> RandomXS128.from(array: com.badlogic.gdx.utils.Array<T>) = if (array.size < 1) null else array[nextInt(array.size)]
