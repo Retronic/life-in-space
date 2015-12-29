@@ -30,9 +30,14 @@ import com.retronicgames.utils.value.MutableValue
 abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum<StateType>>(
 		private val map: GameMap,
 		initialCell: BaseMapCell,
-		override val data: DataType) : GameCharacter<DataType, StateType> {
+		override val data: DataType,
+		val stateIdle: StateType, val stateWalking: StateType) : GameCharacter<DataType, StateType> {
 	override val position: IntVector2
 	override val currentCell = MutableValue(initialCell)
+	var target:BaseMapCell? = null
+		private set
+
+	override val visible = MutableValue(true)
 
 	private var currentPath: RecyclableArray<IntVector2>? = null
 	private var currentPathIdx = 0
@@ -47,6 +52,10 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 
 	override fun moveTo(cell: BaseMapCell?): Boolean {
 		if (cell == null) return false
+		if (state.value != stateIdle) return false
+
+		(state as MutableValue<StateType>).value = stateWalking
+		target = cell
 
 		resetPath()
 
@@ -58,6 +67,8 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 
 		if (!pathEmpty) {
 			nextPathStep(0f)
+		} else {
+			setInvalidState()
 		}
 
 		return pathEmpty
@@ -76,7 +87,7 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 		doMove(delta)
 	}
 
-	fun doMove(delta: Float) {
+	private fun doMove(delta: Float) {
 		val deltaX = (currentTarget.x - position.x).toDouble();
 		val deltaY = (currentTarget.y - position.y).toDouble();
 		val distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -117,6 +128,26 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 	}
 
 	private fun fireTargetReached() {
+		(state as MutableValue<StateType>).value = stateIdle
+		target = null
 
+		callbacks.forEach { it() }
+		callbacks.clear()
+	}
+
+	private fun setInvalidState() {
+		(state as MutableValue<StateType>).value = stateIdle
+		target = null
+
+		callbacks.clear()
+	}
+
+	private val callbacks = com.badlogic.gdx.utils.Array<() -> Unit>(false, 4)
+
+	/**
+	 * Listener will be removed after we reach our target (or there was no path to it)!
+	 */
+	fun onReached(callback: () -> Unit) {
+		callbacks.add(callback)
 	}
 }

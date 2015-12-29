@@ -114,7 +114,7 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 	}
 
 	private fun createTaskBuild(x: Int, y: Int, data: DataBuildings): TaskBuild {
-		return TaskBuild(data) { building ->
+		return TaskBuild(mission, x, y, data) { x, y, building ->
 			mission.map.createBuilding(x, y, building)
 		}
 	}

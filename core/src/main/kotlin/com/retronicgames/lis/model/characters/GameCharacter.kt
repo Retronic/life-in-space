@@ -2,6 +2,7 @@ package com.retronicgames.lis.model.characters
 
 import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.value.MutableValue
 import com.retronicgames.utils.value.ReadOnlyValue
 
 interface GameCharacter<DataType : DataCharacterModel, StateType : Enum<StateType>> {
@@ -9,6 +10,7 @@ interface GameCharacter<DataType : DataCharacterModel, StateType : Enum<StateTyp
 	val state: ReadOnlyValue<StateType>
 	val position: IntVector2
 	val currentCell: ReadOnlyValue<BaseMapCell>
+	val visible: MutableValue<Boolean>
 
 	fun update(delta: Float)
 

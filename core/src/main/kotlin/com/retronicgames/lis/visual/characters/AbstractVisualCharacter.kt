@@ -39,6 +39,9 @@ abstract class AbstractVisualCharacter<CharacterType : GameCharacter<*, *>, Visu
 		sprite.setPosition(xPos - xOff, yPos - yOff)
 		sprite.setOrigin(xOff, yOff)
 
+		character.visible.onChange {
+			isVisible = this
+		}
 		character.position.onChange { oldX, oldY, newX, newY ->
 			sprite.setPosition(newX - xOff, newY - yOff)
 		}

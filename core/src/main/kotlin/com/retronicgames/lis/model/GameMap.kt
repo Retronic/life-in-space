@@ -142,7 +142,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	fun randomEmptyCell(w: Int, h: Int): BaseMapCell? {
 		tempCellArray.clear()
 		forEachCell(false) { x, y, row, cell ->
-			if (cell.w == w && cell.h == h) {
+			if (cell.w == w && cell.h == h && cell.javaClass == BaseMapCell::class.java) {
 				tempCellArray.add(cell)
 			}
 		}
@@ -158,7 +158,9 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 		val w = surroundedCell.w
 		val h = surroundedCell.h
 		val callback = { x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell ->
-			if (targetW <= 0 || targetH <= 0 || (cell.w == targetW && cell.h == targetH) && !tempCellArray.contains(cell, true)) {
+			if (cell.javaClass == BaseMapCell::class.java &&
+					(targetW <= 0 || targetH <= 0 || (cell.w == targetW && cell.h == targetH) && !tempCellArray.contains(cell, true))
+			) {
 				tempCellArray.add(cell)
 			}
 		}

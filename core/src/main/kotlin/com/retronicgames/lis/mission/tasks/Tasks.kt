@@ -19,8 +19,12 @@
  */
 package com.retronicgames.lis.mission.tasks
 
+import com.retronicgames.lis.mission.Mission
+import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.DataBuildings
+import com.retronicgames.lis.model.characters.CharacterSettler
+import com.retronicgames.lis.model.characters.StateSettler
 
 interface Task {
 	/**
@@ -33,23 +37,69 @@ interface Task {
 	fun update(delta: Float)
 }
 
-class TaskBuild(val data: DataBuildings, private val callback: (building: Building) -> Unit) : Task {
+class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuildings, private val callback: (x: Int, y: Int, building: Building) -> Unit) : Task {
+	private enum class TaskState {
+		SEARCHING_FOR_SETTLER, WAITING_FOR_SETTLER, PROCESSING, FINISHED
+	}
+
+	private val buildCell: BaseMapCell?
+	private var state = TaskState.SEARCHING_FOR_SETTLER
+	private var settler: CharacterSettler? = null
+
 	override var finished = false
 
 	override val nameI18N = "build"
 
 	private var buildTime = data.buildTime
 
-	override fun update(delta: Float) {
-		buildTime -= delta
+	init {
+		buildCell = mission.map.cellAt(x, y)
+		if (buildCell == null) {
+			state = TaskState.FINISHED
+			finished = true
+		}
+	}
 
-		if (buildTime <= 0) {
-			finishedBuilding()
+	override fun update(delta: Float) {
+		when (state) {
+			TaskState.SEARCHING_FOR_SETTLER -> {
+				val allIdle = mission.characterMap.filter { it is CharacterSettler && it.state.value == it.stateIdle }
+				if (allIdle.isEmpty()) return
+
+				// FIXME: Sort by distance first
+				val settler = allIdle.first() as CharacterSettler
+				this.settler = settler
+
+				state = TaskState.WAITING_FOR_SETTLER
+
+				settler.moveTo(buildCell)
+				settler.onReached {
+					state = TaskState.PROCESSING;
+					settler.state.value = StateSettler.WORKING;
+					settler.visible.value = false
+				}
+			}
+
+			TaskState.PROCESSING -> {
+				buildTime -= delta
+
+				if (buildTime <= 0) {
+					finishedBuilding()
+				}
+			}
 		}
 	}
 
 	private fun finishedBuilding() {
-		callback(data.buildingMaker())
+		state = TaskState.FINISHED
+		callback(x, y, data.buildingMaker())
+
+		val settler = settler!!
+		settler.visible.value = true
+		settler.state.value = StateSettler.IDLE
+		// FIXME: We need to find the closest empty cell, this can fail when the cell is surrounded!
+		val randomCell = mission.map.randomEmptyCellSurrounding(buildCell!!, -1, -1) ?: throw RuntimeException("FIXME! Can't find an empty cell surrounding the recently constructed cell")
+		settler.moveTo(randomCell)
 		finished = true
 	}
 }
