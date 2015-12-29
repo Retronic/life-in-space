@@ -28,8 +28,14 @@ object LISSkin : Skin() {
 	}
 
 	private fun addStyleLabel() {
-		val style = Label.LabelStyle(fontDefault, Color.BLACK)
+		val style = Label.LabelStyle(fontDefault, MAIN_PALETTE_COLORS[3])
 		add("default", style)
+		val stylePanel1 = Label.LabelStyle(fontDefault, MAIN_PALETTE_COLORS[3])
+		stylePanel1.background = drawable9("panel1")
+		add("panel1", stylePanel1)
+		val stylePanel2 = Label.LabelStyle(fontDefault, MAIN_PALETTE_COLORS[3])
+		stylePanel2.background = drawable9("panel2")
+		add("panel2", stylePanel2)
 	}
 
 	private fun addStyleButton() {
@@ -64,6 +70,25 @@ object LISSkin : Skin() {
 		val style = Button.ButtonStyle(upDrawable, downDrawable, null)
 
 		return Button(style)
+	}
+
+	fun button9(upImageId: String, downImageId: String? = null): Button {
+		val upDrawable = drawable9(upImageId)
+		val downDrawable = drawable9(downImageId)
+
+		val style = Button.ButtonStyle(upDrawable, downDrawable, null)
+
+		return Button(style)
+	}
+
+	fun textButton9(text: String, textColor: Color, upImageId: String, downImageId: String? = null): Button {
+		val upDrawable = drawable9(upImageId)
+		val downDrawable = drawable9(downImageId)
+
+		val style = TextButton.TextButtonStyle(upDrawable, downDrawable, null, fontDefault)
+		style.fontColor = textColor
+
+		return TextButton(text, style)
 	}
 
 	fun dialog(title: String): RGDialog {
@@ -113,4 +138,14 @@ object LISSkin : Skin() {
 		val scroll = ScrollPane(list, this)
 		return scroll
 	}
+
+	fun panel(id: String): Table {
+		val result = Table(LISSkin)
+
+		result.background = drawable9(id)
+
+		return result
+	}
+
+	fun image(atlas: String, id: String) = Image(Assets.sprite(atlas, id))
 }
