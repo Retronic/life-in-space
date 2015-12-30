@@ -21,6 +21,7 @@ package com.retronicgames.lis.visual.buildings
 
 import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.BuildingDigSite
+import com.retronicgames.lis.model.buildings.BuildingLaboratory
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.buildings.BuildingPowerBlock
@@ -48,5 +49,10 @@ class VisualBuildingPowerBlock(cell: ModelMapCell<BuildingPowerBlock>) :
 
 class VisualBuildingSolarPanels(cell: ModelMapCell<BuildingSolarPanels>) :
 		AbstractVisualBuilding<BuildingSolarPanels, DataVisualBuildingSolarPanels>(cell, DataVisualBuildingSolarPanels) {
+
+}
+
+class VisualBuildingLaboratory(cell: ModelMapCell<BuildingLaboratory>) :
+		AbstractVisualBuilding<BuildingLaboratory, DataVisualBuildingLaboratory>(cell, DataVisualBuildingLaboratory) {
 
 }

@@ -62,7 +62,7 @@ enum class DataBuildings(
 			passable = false,
 			size = IntVector2(2, 2),
 			buildTime = 3f,
-			requiredResources = hashMapOf(),
+			requiredResources = hashMapOf(ResourceType.BRICKS to 300),
 			buildingMaker = ::BuildingLivingBlock
 	),
 	DIG_SITE(
@@ -88,7 +88,16 @@ enum class DataBuildings(
 			buildTime = 3f,
 			requiredResources = hashMapOf(),
 			buildingMaker = ::BuildingSolarPanels
-	);
+	),
+	LABORATORY(
+			id = "laboratory",
+			passable = false,
+			size = IntVector2(2, 2),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingLaboratory
+	)
+	;
 
 	override fun toString() = LISGUI.i18n.get("name.$id")
 }

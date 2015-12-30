@@ -33,6 +33,7 @@ import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.Building
 import com.retronicgames.lis.model.buildings.BuildingDigSite
+import com.retronicgames.lis.model.buildings.BuildingLaboratory
 import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.buildings.BuildingPowerBlock
@@ -40,6 +41,7 @@ import com.retronicgames.lis.model.buildings.BuildingSolarPanels
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.buildings.VisualBuildingDigSite
+import com.retronicgames.lis.visual.buildings.VisualBuildingLaboratory
 import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
 import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
 import com.retronicgames.lis.visual.buildings.VisualBuildingPowerBlock
@@ -167,6 +169,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 			is BuildingDigSite -> VisualBuildingDigSite(cell as ModelMapCell<BuildingDigSite>)
 			is BuildingPowerBlock -> VisualBuildingPowerBlock(cell as ModelMapCell<BuildingPowerBlock>)
 			is BuildingSolarPanels -> VisualBuildingSolarPanels(cell as ModelMapCell<BuildingSolarPanels>)
+			is BuildingLaboratory -> VisualBuildingLaboratory(cell as ModelMapCell<BuildingLaboratory>)
 			else -> throw RuntimeException("Unknown building type! ($model)")
 		})
 	}

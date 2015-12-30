@@ -22,3 +22,7 @@ object DataVisualBuildingPowerBlock: DataVisual {
 object DataVisualBuildingSolarPanels: DataVisual {
 	override val offset = IntVector2.ZERO
 }
+
+object DataVisualBuildingLaboratory: DataVisual {
+	override val offset = IntVector2.ZERO
+}

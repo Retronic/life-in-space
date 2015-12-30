@@ -17,13 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Life in Space.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.retronicgames.lis.mission.resources
+package com.retronicgames.lis.model.buildings
 
-interface Resource {
-	val id: String
-	val unit: String
-}
+class BuildingLaboratory : AbstractBuilding(DataBuildings.LABORATORY) {
 
-enum class ResourceType(override val id: String, override val unit: String) : Resource {
-	POWER("power", "kw"), RESEARCH_POINTS("research", "pt"), BRICKS("bricks", "");
 }
