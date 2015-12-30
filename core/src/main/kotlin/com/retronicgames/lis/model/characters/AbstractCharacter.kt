@@ -63,15 +63,19 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 		val path = map.pathFinding.findPath(currentCell.x, currentCell.y, cell.x, cell.y)
 		currentPath = path
 
-		val pathEmpty = path.size <= 0
+		val isValidPath = path.size > 0
+		val isCurrentCell = cell == currentCell
 
-		if (!pathEmpty) {
+		if (isCurrentCell) {
+			// A bit messy... This is also inside nextPathStep()
+			VisualMap.cellCoordsToPixelPosition(IntVector2(cell.x, cell.y), currentTarget)
+		} else if (isValidPath) {
 			nextPathStep(0f)
 		} else {
 			setInvalidState()
 		}
 
-		return pathEmpty
+		return isCurrentCell || isValidPath
 	}
 
 	private fun resetPath() {
@@ -82,7 +86,7 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 	}
 
 	override fun update(delta: Float) {
-		if (currentPath == null) return
+		if (target == null) return
 
 		doMove(delta)
 	}
@@ -137,6 +141,7 @@ abstract class AbstractCharacter<DataType : DataCharacterModel, StateType : Enum
 
 	private fun setInvalidState() {
 		(state as MutableValue<StateType>).value = stateIdle
+		currentPath = null
 		target = null
 
 		callbacks.clear()
