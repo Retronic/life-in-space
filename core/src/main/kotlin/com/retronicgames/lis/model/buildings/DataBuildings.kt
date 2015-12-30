@@ -19,6 +19,7 @@
  */
 package com.retronicgames.lis.model.buildings
 
+import com.retronicgames.lis.mission.resources.ResourceType
 import com.retronicgames.lis.model.DataModel
 import com.retronicgames.lis.ui.LISGUI
 import com.retronicgames.utils.IntVector2
@@ -34,19 +35,60 @@ interface DataBuildingModel : DataModel {
 	 * In seconds
 	 */
 	val buildTime: Float
+
+	/**
+	 * Required resources to build
+	 */
+	val requiredResources: Map<ResourceType, Int>
 }
 
 enum class DataBuildings(
 		override val id: String,
 		override val passable: Boolean,
 		override val size: IntVector2, override val buildTime: Float,
+		override val requiredResources: Map<ResourceType, Int>,
 		val buildingMaker: () -> Building
 ) : DataBuildingModel {
-	LANDING_ZONE("landingZone", true, IntVector2(3, 3), 3f, ::BuildingLandingZone),
-	LIVING_BLOCK("livingBlock", false, IntVector2(2, 2), 3f, ::BuildingLivingBlock),
-	DIG_SITE("digSite", false, IntVector2(3, 3), 3f, ::BuildingDigSite),
-	POWER_BLOCK("powerBlock", false, IntVector2(1, 1), 3f, ::BuildingPowerBlock),
-	SOLAR_PANELS("solarPanels", false, IntVector2(3, 3), 3f, ::BuildingSolarPanels);
+	LANDING_ZONE(
+			id = "landingZone",
+			passable = true,
+			size = IntVector2(3, 3),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingLandingZone
+	),
+	LIVING_BLOCK(
+			id = "livingBlock",
+			passable = false,
+			size = IntVector2(2, 2),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingLivingBlock
+	),
+	DIG_SITE(
+			id = "digSite",
+			passable = false,
+			size = IntVector2(3, 3),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingDigSite
+	),
+	POWER_BLOCK(
+			id = "powerBlock",
+			passable = false,
+			size = IntVector2(1, 1),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingPowerBlock
+	),
+	SOLAR_PANELS(
+			id = "solarPanels",
+			passable = false,
+			size = IntVector2(3, 3),
+			buildTime = 3f,
+			requiredResources = hashMapOf(),
+			buildingMaker = ::BuildingSolarPanels
+	);
 
 	override fun toString() = LISGUI.i18n.get("name.$id")
 }
