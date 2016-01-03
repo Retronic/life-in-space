@@ -88,6 +88,7 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 
 				settler.moveTo(buildCell)
 				settler.onReached {
+					buildCell!!.model.started.value = true
 					state = TaskState.PROCESSING;
 					settler.state.value = StateSettler.WORKING;
 					settler.visible.value = false

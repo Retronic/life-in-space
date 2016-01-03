@@ -22,11 +22,14 @@ package com.retronicgames.lis.model.buildings
 import com.retronicgames.lis.model.DataModel
 import com.retronicgames.lis.model.Model
 import com.retronicgames.utils.IntVector2
+import com.retronicgames.utils.value.MutableValue
 
 class DataConstructionSite(val size: IntVector2) : DataModel {
 	override val id = "constructionSite"
 }
 
 class ConstructionSite(size: IntVector2) : Model<DataModel> {
+	val started = MutableValue(false)
+
 	override val data = DataConstructionSite(size)
 }

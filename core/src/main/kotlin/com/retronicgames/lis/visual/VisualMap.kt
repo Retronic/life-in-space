@@ -163,7 +163,7 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 	}
 
 	private fun createConstructionSite(cell: ModelMapCell<ConstructionSite>) {
-		buildingsLayer.add(VisualConstructionSite(cell))
+		buildingsLayer.add(VisualConstructionSite(this, cell))
 	}
 
 	private fun createBuilding(cell: ModelMapCell<Building>) {
@@ -209,5 +209,10 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 
 	fun unmarkCells() {
 		cellSelection.isVisible = false
+	}
+
+	// FIXME: HACK!
+	fun temporaryInvalidateGraphicCacheREMOVEME() {
+		renderer.invalidateCache()
 	}
 }

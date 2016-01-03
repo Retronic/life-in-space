@@ -7,7 +7,7 @@ import com.retronicgames.lis.model.DataModel
 import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.Model
 
-open class VisualMapObject<ModelType: Model<out DataModel>>(val baseCell: ModelMapCell<ModelType>, val sprite: Sprite) : MapObject(), Tintable {
+open class VisualMapObject<ModelType: Model<out DataModel>>(val baseCell: ModelMapCell<ModelType>, var sprite: Sprite) : MapObject(), Tintable {
 	override var tint: Color?
 		get() = color
 		set(value) {
