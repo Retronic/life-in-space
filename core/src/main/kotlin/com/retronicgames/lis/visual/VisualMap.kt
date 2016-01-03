@@ -85,6 +85,8 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 	private var cellSelection = CellSelection()
 
 	init {
+		cellSelection.isVisible = false
+
 		val textureAtlas = Assets.textureAtlas("terrain") ?: throw RuntimeException("Cannot load terrain!")
 
 		val tileRegex = Regex("tile(\\d)x(\\d)")
