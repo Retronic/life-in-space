@@ -28,6 +28,7 @@ import com.retronicgames.lis.model.BaseMapCell
 import com.retronicgames.lis.model.GameMap
 import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.Building
+import com.retronicgames.lis.model.buildings.ConstructionSite
 import com.retronicgames.utils.IntVector2
 import com.retronicgames.utils.MutableIntVector2
 import com.retronicgames.utils.RecyclableArray
@@ -140,7 +141,14 @@ private class PathFindingCell(val x: Int, val y: Int) : IndexedNode<PathFindingC
 	                          x: Int, y: Int) {
 		val cell = map.cellAt(x, y) ?: return
 		val passable = when {
-			cell is ModelMapCell<*> && cell.model is Building && cell.model.data.passable -> true
+			cell is ModelMapCell<*> -> {
+				val model = cell.model
+				when {
+					model is Building && model.data.passable -> true
+					model is ConstructionSite -> true
+					else -> false
+				}
+			}
 			cell.javaClass == BaseMapCell::class.java -> true
 			else -> false
 		}

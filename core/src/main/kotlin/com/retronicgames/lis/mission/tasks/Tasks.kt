@@ -53,11 +53,14 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 	private var buildTime = data.buildTime
 
 	init {
-		buildCell = mission.map.cellAt(x, y)
-		if (buildCell == null) {
+		val map = mission.map
+
+		buildCell = map.cellAt(x, y)
+		if (buildCell == null || buildCell.javaClass != BaseMapCell::class.java) {
 			state = TaskState.FINISHED
 			finished = true
 		}
+		map.createConstructionSite(x, y)
 	}
 
 	override fun update(delta: Float) {

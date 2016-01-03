@@ -22,6 +22,7 @@ package com.retronicgames.lis.model
 import com.badlogic.gdx.math.RandomXS128
 import com.retronicgames.gdx.from
 import com.retronicgames.lis.model.buildings.Building
+import com.retronicgames.lis.model.buildings.ConstructionSite
 import com.retronicgames.lis.model.map.PathFinding
 import com.retronicgames.utils.IntVector2
 
@@ -107,6 +108,14 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations.
 	 */
 	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
+
+	fun createConstructionSite(x: Int, y: Int): Boolean {
+		val cell = cellAt(x, y) ?: return false
+		val size = IntVector2(cell.w, cell.h)
+		return addTopCell(x, y, size, { size, baseCell ->
+			ModelMapCell(ConstructionSite(size), baseCell.x, baseCell.y, size.x, size.y, baseCell)
+		})
+	}
 
 	fun createBuilding(x: Int, y: Int, model: Building) = addTopCell(x, y, model.data.size, { size, baseCell ->
 		ModelMapCell(model, baseCell.x, baseCell.y, size.x, size.y, baseCell)

@@ -38,6 +38,7 @@ import com.retronicgames.lis.model.buildings.BuildingLandingZone
 import com.retronicgames.lis.model.buildings.BuildingLivingBlock
 import com.retronicgames.lis.model.buildings.BuildingPowerBlock
 import com.retronicgames.lis.model.buildings.BuildingSolarPanels
+import com.retronicgames.lis.model.buildings.ConstructionSite
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.lis.model.characters.GameCharacter
 import com.retronicgames.lis.visual.buildings.VisualBuildingDigSite
@@ -46,6 +47,7 @@ import com.retronicgames.lis.visual.buildings.VisualBuildingLandingZone
 import com.retronicgames.lis.visual.buildings.VisualBuildingLivingBlock
 import com.retronicgames.lis.visual.buildings.VisualBuildingPowerBlock
 import com.retronicgames.lis.visual.buildings.VisualBuildingSolarPanels
+import com.retronicgames.lis.visual.buildings.VisualConstructionSite
 import com.retronicgames.lis.visual.characters.VisualCharacterSettler
 import com.retronicgames.utils.CameraListener
 import com.retronicgames.utils.IntVector2
@@ -135,9 +137,8 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 		when (cell) {
 			is ModelMapCell<*> -> {
 				when (cell.model) {
-					is Building -> {
-						createBuilding(cell as ModelMapCell<Building>)
-					}
+					is Building -> createBuilding(cell as ModelMapCell<Building>)
+					is ConstructionSite -> createConstructionSite(cell as ModelMapCell<ConstructionSite>)
 					else -> throw RuntimeException("Unknown model type! (${cell.model})")
 				}
 			}
@@ -157,6 +158,10 @@ class VisualMap(private val map: GameMap, private val characterMap: GameCharacte
 			else -> throw RuntimeException("Unknown character type! ($character)")
 		}
 		baseLayer.objects.add(visualCharacter)
+	}
+
+	private fun createConstructionSite(cell: ModelMapCell<ConstructionSite>) {
+		buildingsLayer.add(VisualConstructionSite(cell))
 	}
 
 	private fun createBuilding(cell: ModelMapCell<Building>) {
