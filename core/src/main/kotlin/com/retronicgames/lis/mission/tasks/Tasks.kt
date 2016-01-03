@@ -21,7 +21,10 @@ package com.retronicgames.lis.mission.tasks
 
 import com.retronicgames.lis.mission.Mission
 import com.retronicgames.lis.model.BaseMapCell
+import com.retronicgames.lis.model.GameMap
+import com.retronicgames.lis.model.ModelMapCell
 import com.retronicgames.lis.model.buildings.Building
+import com.retronicgames.lis.model.buildings.ConstructionSite
 import com.retronicgames.lis.model.buildings.DataBuildings
 import com.retronicgames.lis.model.characters.CharacterSettler
 import com.retronicgames.lis.model.characters.StateSettler
@@ -42,7 +45,7 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 		SEARCHING_FOR_SETTLER, WAITING_FOR_SETTLER, PROCESSING, FINISHED
 	}
 
-	private val buildCell: BaseMapCell?
+	private val buildCell: ModelMapCell<ConstructionSite>?
 	private var state = TaskState.SEARCHING_FOR_SETTLER
 	private var settler: CharacterSettler? = null
 
@@ -55,12 +58,20 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 	init {
 		val map = mission.map
 
-		buildCell = map.cellAt(x, y)
-		if (buildCell == null || buildCell.javaClass != BaseMapCell::class.java) {
-			state = TaskState.FINISHED
-			finished = true
+		buildCell = createConstructionSite(map)
+	}
+
+	private fun createConstructionSite(map: GameMap): ModelMapCell<ConstructionSite>? {
+		val buildCell = map.cellAt(x, y)
+		if (buildCell != null && buildCell.javaClass == BaseMapCell::class.java) {
+			val createdSite = map.createConstructionSite(x, y)
+			if (createdSite) {
+				return map.cellAt(x, y) as ModelMapCell<ConstructionSite>
+			}
 		}
-		map.createConstructionSite(x, y)
+
+		markAsFinished()
+		return null
 	}
 
 	override fun update(delta: Float) {
@@ -94,7 +105,8 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 	}
 
 	private fun finishedBuilding() {
-		state = TaskState.FINISHED
+		markAsFinished()
+
 		callback(x, y, data.buildingMaker())
 
 		val settler = settler!!
@@ -103,6 +115,10 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 		// FIXME: We need to find the closest empty cell, this can fail when the cell is surrounded!
 		val randomCell = mission.map.randomEmptyCellSurrounding(buildCell!!, -1, -1) ?: throw RuntimeException("FIXME! Can't find an empty cell surrounding the recently constructed cell")
 		settler.moveTo(randomCell)
+	}
+
+	private fun markAsFinished() {
+		state = TaskState.FINISHED
 		finished = true
 	}
 }
