@@ -56,16 +56,17 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	 */
 	fun makeHoles(maxCount: Int, holeW: Int, holeH: Int) {
 		for (j in 0..maxCount - 1) {
-			val x = random.nextInt(width)
-			if (x > width - holeW) continue
-			val y = random.nextInt(height)
-			if (y > height - holeH) continue
+			val x = random.nextInt(width - holeW)
+			val y = random.nextInt(height - holeH)
 
 			var valid = true
 
 			val newCell = BaseMapCell(x, y, holeW, holeH)
-			forEachInRange(true, newCell) { x, y, row, oldCell ->
-				if (oldCell.javaClass != BaseMapCell::class.java || oldCell.w != 1 || oldCell.h != 1) valid = false
+			forEachInRange(true, newCell) { x, y, oldCell ->
+				if (oldCell.w != 1 || oldCell.h != 1) {
+                    valid = false
+                    return@forEachInRange
+                }
 			}
 
 			if (!valid) continue
@@ -75,8 +76,8 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	}
 
 	private fun setCell(newCell: BaseMapCell) {
-		forEachInRange(true, newCell) { x, y, row, cell ->
-			row[x] = newCell
+		forEachInRange(true, newCell) { x, y, cell ->
+			gameMap[y][x] = newCell
 		}
 	}
 
@@ -84,7 +85,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations.
 	 * It also means that if the starting coordinate points to "half" a cell (i.e. is not the bottom left coordinate for that cell), said cell won't be returned!!
 	 */
-	private fun forEachInRange(processRepeated: Boolean, x: Int, y: Int, w: Int, h: Int, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
+	private fun forEachInRange(processRepeated: Boolean, x: Int, y: Int, w: Int, h: Int, callback: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {
 		val x1 = Math.max(0, x)
 		val y1 = Math.max(0, y)
 		val x2 = Math.min(width - 1, x + w - 1)
@@ -95,19 +96,20 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 			for (newX in x1..x2) {
 				val cell = row[newX]
 				if (!processRepeated && (cell.x != newX || cell.y != newY)) continue
-				callback(newX, newY, row, cell)
+				callback(newX, newY, cell)
 			}
 		}
 	}
 
-	private fun forEachInRange(processRepeated: Boolean, cell: BaseMapCell, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) {
+	private fun forEachInRange(processRepeated: Boolean, cell: BaseMapCell, callback: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {
 		return forEachInRange(processRepeated, cell.x, cell.y, cell.w, cell.h, callback)
 	}
 
 	/**
 	 * @param processRepeated if true, the callback will receive multiple times cells that spawn multiple locations.
 	 */
-	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell) -> Unit) = forEachInRange(processRepeated, 0, 0, width, height, callback)
+	fun forEachCell(processRepeated: Boolean, callback: (x: Int, y: Int, cell: BaseMapCell) -> Unit) =
+			forEachInRange(processRepeated, 0, 0, width, height, callback)
 
 	fun createConstructionSite(x: Int, y: Int): Boolean {
 		val cell = cellAt(x, y) ?: return false
@@ -128,8 +130,8 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 
 		val newCell = cellCreator(size, cell)
 
-		forEachInRange(true, newCell) { x, y, row, cell ->
-			row[x] = newCell
+		forEachInRange(true, newCell) { x, y, cell ->
+			gameMap[y][x] = newCell
 		}
 		fireCellChange(x, y, newCell)
 
@@ -150,7 +152,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 
 	fun randomEmptyCell(w: Int, h: Int): BaseMapCell? {
 		tempCellArray.clear()
-		forEachCell(false) { x, y, row, cell ->
+		forEachCell(false) { x, y, cell ->
 			if (cell.w == w && cell.h == h && cell.javaClass == BaseMapCell::class.java) {
 				tempCellArray.add(cell)
 			}
@@ -166,7 +168,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 		val y = surroundedCell.y
 		val w = surroundedCell.w
 		val h = surroundedCell.h
-		val callback = { x: Int, y: Int, row: Array<BaseMapCell>, cell: BaseMapCell ->
+		val callback = { x: Int, y: Int, cell: BaseMapCell ->
 			if (cell.javaClass == BaseMapCell::class.java &&
 					(targetW <= 0 || targetH <= 0 || (cell.w == targetW && cell.h == targetH) && !tempCellArray.contains(cell, true))
 			) {

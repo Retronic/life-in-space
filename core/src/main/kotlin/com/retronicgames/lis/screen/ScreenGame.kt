@@ -142,7 +142,8 @@ class ScreenGame(val mission: Mission) : ScreenAdapter() {
 
 	@Suppress("NOTHING_TO_INLINE")
 	private inline fun render() {
-		Gdx.gl.glClearColor(0xcb / 255f, 0xc4 / 255f, 0xac / 255f, 1f)
+		// d9d5c3
+		Gdx.gl.glClearColor(0xd9 / 255f, 0xd5 / 255f, 0xc3 / 255f, 1f)
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
 		visualMap.render()
