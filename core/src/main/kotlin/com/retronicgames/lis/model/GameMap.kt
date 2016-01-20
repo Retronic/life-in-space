@@ -150,6 +150,8 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 	fun cellAt(x: Int, y: Int) = gameMap.getOrNull(y)?.getOrNull(x)
 	fun cellAt(coords: IntVector2) = cellAt(coords.x, coords.y)
 
+	inline operator fun get( x:Int, y:Int ): BaseMapCell? = cellAt( x, y )
+
 	fun randomEmptyCell(w: Int, h: Int): BaseMapCell? {
 		tempCellArray.clear()
 		forEachCell(false) { x, y, cell ->

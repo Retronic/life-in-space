@@ -62,11 +62,11 @@ class TaskBuild(val mission: Mission, val x: Int, val y: Int, val data: DataBuil
 	}
 
 	private fun createConstructionSite(map: GameMap): ModelMapCell<ConstructionSite>? {
-		val buildCell = map.cellAt(x, y)
+		val buildCell = map[x, y]
 		if (buildCell != null && buildCell.javaClass == BaseMapCell::class.java) {
 			val createdSite = map.createConstructionSite(x, y)
 			if (createdSite) {
-				return map.cellAt(x, y) as ModelMapCell<ConstructionSite>
+				return map[x, y] as ModelMapCell<ConstructionSite>
 			}
 		}
 
