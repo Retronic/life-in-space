@@ -62,12 +62,18 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 			var valid = true
 
 			val newCell = BaseMapCell(x, y, holeW, holeH)
-			forEachInRange(true, newCell) { x, y, oldCell ->
+			for (cell in Region( newCell )) {
+				if (cell != null && (cell.w != 1 || cell.h != 1)) {
+					valid = false
+					break
+				}
+			}
+		/*	forEachInRange(true, newCell) { x, y, oldCell ->
 				if (oldCell.w != 1 || oldCell.h != 1) {
                     valid = false
                     return@forEachInRange
                 }
-			}
+			}*/
 
 			if (!valid) continue
 
@@ -130,9 +136,7 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 
 		val newCell = cellCreator(size, cell)
 
-		forEachInRange(true, newCell) { x, y, cell ->
-			gameMap[y][x] = newCell
-		}
+		setCell( newCell )
 		fireCellChange(x, y, newCell)
 
 		return true
@@ -188,6 +192,30 @@ class GameMap(val seed: Long, val width: Int, val height: Int, initializer: Game
 
 	fun addOnCellListener(listener: (x: Int, y: Int, cell: BaseMapCell) -> Unit) {
 		cellChangeListeners.add(listener)
+	}
+
+	inner class Region(val x:Int=0, val y:Int=0, val w:Int=this@GameMap.width, val h:Int=this@GameMap.height): Iterable<BaseMapCell?> {
+
+		constructor( cell:BaseMapCell ) : this ( cell.x, cell.y, cell.w, cell.h )
+
+		override fun iterator(): Iterator<BaseMapCell?> {
+			return RegionIterator( x, y )
+		}
+
+		private inner class RegionIterator( var cx:Int, var cy:Int ) : Iterator<BaseMapCell?> {
+			override fun next(): BaseMapCell? {
+				var cell =  this@GameMap[cx, cy]
+				if (cx >= x + w) {
+					cx = x
+					cy++
+				} else {
+					cx++
+				}
+				return cell
+			}
+
+			override fun hasNext(): Boolean = cy < y + h
+		}
 	}
 }
 
