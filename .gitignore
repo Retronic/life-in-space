@@ -5,4 +5,7 @@ build/
 
 local.properties
 
+# Modules
+*.iml
+
 core/src/main/resources/textures

@@ -139,7 +139,7 @@ private class PathFindingCell(val x: Int, val y: Int) : IndexedNode<PathFindingC
 	                          map: GameMap,
 	                          pathMap: Array<Array<PathFindingCell>>,
 	                          x: Int, y: Int) {
-		val cell = map.cellAt(x, y) ?: return
+		val cell = map[x, y] ?: return
 		val passable = when {
 			cell is ModelMapCell<*> -> {
 				val model = cell.model
